@@ -114,7 +114,7 @@ SweetCode is a Chromium extension designed to gamify your LeetCode practice sess
 - The extension currently supports Instagram and YouTube blocking by default.
 
 ## Contributing
-Feel free to fork this repository and submit pull requests to enhance the functionality of SweetCode. Suggestions for additional features are welcome!
+Feel free to fork this repository and submit pull requests or checkout pending issues to enhance the functionality of SweetCode. Suggestions for additional features are welcome!
 
 ## License
 This project is licensed under the MIT License. See the `LICENSE` file for details.
