@@ -1,7 +1,7 @@
 # SweetCode - Gamify LeetCode Practice
 
 ## Overview
-SweetCode is a Chrome extension designed to gamify your LeetCode practice sessions. It rewards you with social media usage time based on the difficulty of the LeetCode problems you solve. Once installed, SweetCode helps you stay productive by blocking social media websites (currently Instagram and YouTube) when your allotted time runs out. Your time allowance resets daily.
+SweetCode is a Chromium extension designed to gamify your LeetCode practice sessions. It rewards you with social media usage time based on the difficulty of the LeetCode problems you solve. Once installed, SweetCode helps you stay productive by blocking social media websites (currently Instagram and YouTube) when your allotted time runs out. Your time allowance resets daily.
 
 ## Key Features
 - **Earn Rewards**: Gain social media time based on LeetCode problem difficulty:
@@ -17,12 +17,12 @@ SweetCode is a Chrome extension designed to gamify your LeetCode practice sessio
 ### Clone the Repository
 1. Clone this repository to your local machine:
    ```bash
-   git clone https://github.com/yourusername/sweetcode.git
+   git clone https://github.com/decodingafterlife/SweetCode.git
    ```
 
 2. Navigate to the project directory:
    ```bash
-   cd sweetcode
+   cd SweetCode
    ```
 
 ### Load the Extension
@@ -31,7 +31,7 @@ SweetCode is a Chrome extension designed to gamify your LeetCode practice sessio
 3. Click **Load unpacked** and select the directory where you cloned the repository.
 4. The extension will now appear in your extensions list.
 
-### Customize Blocked Websites
+### Customize/Add Blocked Websites
 1. Open the `manifest.json` file in a text editor.
 2. Under `host_permissions`, add the URLs of additional websites you want to block:
    ```json
@@ -109,6 +109,7 @@ SweetCode is a Chrome extension designed to gamify your LeetCode practice sessio
 3. **Block Social Media**: If your time runs out and you try to access a blocked site (e.g., Instagram or YouTube), you will be redirected to a custom "Time's Up!" page.
 
 ## Notes
+- This extension can be used in all Chromium based browsers.
 - Your social media time is tracked locally in Chrome's storage and resets daily.
 - The extension currently supports Instagram and YouTube blocking by default.
 
