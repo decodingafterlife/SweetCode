@@ -1,0 +1,45 @@
+.leetcode-reward-popup {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  z-index: 10000;
+  font-family: Arial, sans-serif;
+  animation: slideIn 0.5s ease-out;
+  max-width: 300px;
+}
+
+.leetcode-reward-popup h3 {
+  margin: 0 0 10px 0;
+  color: #2cbb5d;
+}
+
+.leetcode-reward-popup p {
+  margin: 5px 0;
+  color: #333;
+}
+
+.leetcode-reward-popup .time-added {
+  font-size: 1.2em;
+  font-weight: bold;
+  color: #1a73e8;
+}
+
+.leetcode-reward-popup .total-time {
+  font-size: 0.9em;
+  color: #666;
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}

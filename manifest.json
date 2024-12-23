@@ -1,0 +1,29 @@
+{
+  "manifest_version": 3,
+  "name": "SweetCode",
+  "version": "1.0",
+  "description": "Gamify LeetCode practice by earning social media time",
+  "permissions": [
+    "webRequest",
+    "storage",
+    "webNavigation",
+    "scripting",
+    "tabs",
+    "notifications"
+  ],
+  "host_permissions": [
+    "https://leetcode.com/*",
+    "https://www.youtube.com/*",
+    "https://www.instagram.com/*"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://leetcode.com/*"],
+      "js": ["content.js"],
+      "css": ["popup.css"]
+    }
+  ]
+}
