@@ -12,6 +12,9 @@ SweetCode is a Chromium extension designed to gamify your LeetCode practice sess
 - **Website Blocking**: Blocks access to specified social media websites when time runs out.
 - **Customizable**: Easily add more websites to block or modify time rewards.
 
+![Alt text](Images/popup.png)
+![Alt text](Images/block.png)
+
 ## How to Use
 
 ### Clone the Repository
