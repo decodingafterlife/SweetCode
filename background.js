@@ -154,24 +154,104 @@ function getDifficulty() {
   return difficultyElement ? difficultyElement.textContent : null;
 }
 
-// Block social media if time is up
+// // Block social media if time is up
+// chrome.webNavigation.onBeforeNavigate.addListener(function(details) {
+//   checkAndResetDaily();
+  
+//   if (timeAllowed <= 0 && 
+//       (details.url.includes('youtube.com') || 
+//        details.url.includes('instagram.com'))) {
+//     chrome.tabs.update(details.tabId, {
+//       url: chrome.runtime.getURL('blocked.html')
+//     });
+//   }
+// });
+
+// // Decrease time when on social media
+// chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
+//   if (changeInfo.status === 'complete' && 
+//       (tab.url?.includes('youtube.com') || 
+//        tab.url?.includes('instagram.com'))) {
+//     const interval = setInterval(() => {
+//       checkAndResetDaily();
+//       if (timeAllowed > 0) {
+//         timeAllowed--;
+//         chrome.storage.local.set({ timeAllowed });
+//       } else {
+//         clearInterval(interval);
+//         chrome.tabs.update(tabId, {
+//           url: chrome.runtime.getURL('blocked.html')
+//         });
+//       }
+//     }, 1000);
+//   }
+// });
+
+// Replace the existing URL checking functions with these updated versions:
+
+// Helper function to check if URL is a social media main page
+function isSocialMediaMainPage(url) {
+  if (!url) return false;
+  
+  // Create URL object for better parsing
+  try {
+    const urlObj = new URL(url);
+    
+    // Define patterns for main social media pages
+    const youtubePattern = /^(www\.)?youtube\.com\/?($|\/watch|\/feed|\/trending|\/subscriptions|\/playlist|\/channel|\/c\/|\/user\/)/i;
+    const instagramPattern = /^(www\.)?instagram\.com\/?($|\/p\/|\/reels\/|\/stories\/|\/explore\/)/i;
+    const twitterPattern = /^(www\.)?twitter\.com\/?($|\/home|\/explore|\/notifications|\/messages|\/i\/|\/[^/]+$)/i;
+    const xPattern = /^(www\.)?x\.com\/?($|\/home|\/explore|\/notifications|\/messages|\/i\/|\/[^/]+$)/i;
+    const facebookPattern = /^(www\.)?facebook\.com\/?($|\/profile|\/groups|\/marketplace|\/watch|\/gaming|\/messages|\/notifications|\/feed|\/photos|\/videos)/i;
+    
+    // Explicitly exclude login and authentication pages
+    const excludePatterns = [
+      /accounts\.google\.com/,
+      /signin/,
+      /login/,
+      /auth/,
+      /servicelogin/,
+      /signup/,
+      /registration/,
+      /forgot/,
+      /recover/,
+      /help/,
+      /support/
+    ];
+
+    // Check if URL matches any exclude patterns
+    if (excludePatterns.some(pattern => pattern.test(urlObj.hostname) || pattern.test(urlObj.pathname))) {
+      return false;
+    }
+
+    // Check if URL matches social media patterns
+    return (
+      (urlObj.hostname === 'youtube.com' || urlObj.hostname === 'www.youtube.com') && youtubePattern.test(urlObj.host + urlObj.pathname) ||
+      (urlObj.hostname === 'instagram.com' || urlObj.hostname === 'www.instagram.com') && instagramPattern.test(urlObj.host + urlObj.pathname) ||
+      (urlObj.hostname === 'twitter.com' || urlObj.hostname === 'www.twitter.com') && twitterPattern.test(urlObj.host + urlObj.pathname) ||
+      (urlObj.hostname === 'x.com' || urlObj.hostname === 'www.x.com') && xPattern.test(urlObj.host + urlObj.pathname) || // Include x.com for Twitter
+      (urlObj.hostname === 'facebook.com' || urlObj.hostname === 'www.facebook.com') && facebookPattern.test(urlObj.host + urlObj.pathname)
+    );
+  } catch (e) {
+    console.error('Error parsing URL:', e);
+    return false;
+  }
+}
+
+// Update the blocking listener
 chrome.webNavigation.onBeforeNavigate.addListener(function(details) {
   checkAndResetDaily();
   
-  if (timeAllowed <= 0 && 
-      (details.url.includes('youtube.com') || 
-       details.url.includes('instagram.com'))) {
+  if (timeAllowed <= 0 && isSocialMediaMainPage(details.url)) {
     chrome.tabs.update(details.tabId, {
       url: chrome.runtime.getURL('blocked.html')
     });
   }
 });
 
-// Decrease time when on social media
+// Update the time counter listener
 chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
-  if (changeInfo.status === 'complete' && 
-      (tab.url?.includes('youtube.com') || 
-       tab.url?.includes('instagram.com'))) {
+  if (changeInfo.status === 'complete' && isSocialMediaMainPage(tab.url)) {
     const interval = setInterval(() => {
       checkAndResetDaily();
       if (timeAllowed > 0) {
