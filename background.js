@@ -154,41 +154,6 @@ function getDifficulty() {
   return difficultyElement ? difficultyElement.textContent : null;
 }
 
-// // Block social media if time is up
-// chrome.webNavigation.onBeforeNavigate.addListener(function(details) {
-//   checkAndResetDaily();
-  
-//   if (timeAllowed <= 0 && 
-//       (details.url.includes('youtube.com') || 
-//        details.url.includes('instagram.com'))) {
-//     chrome.tabs.update(details.tabId, {
-//       url: chrome.runtime.getURL('blocked.html')
-//     });
-//   }
-// });
-
-// // Decrease time when on social media
-// chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
-//   if (changeInfo.status === 'complete' && 
-//       (tab.url?.includes('youtube.com') || 
-//        tab.url?.includes('instagram.com'))) {
-//     const interval = setInterval(() => {
-//       checkAndResetDaily();
-//       if (timeAllowed > 0) {
-//         timeAllowed--;
-//         chrome.storage.local.set({ timeAllowed });
-//       } else {
-//         clearInterval(interval);
-//         chrome.tabs.update(tabId, {
-//           url: chrome.runtime.getURL('blocked.html')
-//         });
-//       }
-//     }, 1000);
-//   }
-// });
-
-// Replace the existing URL checking functions with these updated versions:
-
 // Helper function to check if URL is a social media main page
 function isSocialMediaMainPage(url) {
   if (!url) return false;
