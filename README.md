@@ -1,7 +1,7 @@
 # SweetCode - Gamify LeetCode Practice
 
 ## Overview
-SweetCode is a Chrome extension designed to gamify your LeetCode practice sessions. It rewards you with social media usage time based on the difficulty of the LeetCode problems you solve. Once installed, SweetCode helps you stay productive by allowing access only to social media websites (currently Instagram, YouTube, Facebook, Twitter/X) when your allotted time runs out. Your time allowance resets daily.
+SweetCode is a Chrome extension designed to gamify your LeetCode practice sessions. It rewards you with social media usage time based on the difficulty of the LeetCode problems you solve. Once installed, SweetCode helps you stay productive by allowing limited access to social media websites until your time runs out. Your time allowance resets daily.
 
 ## Key Features
 - **Earn Rewards**: Gain social media time based on LeetCode problem difficulty:
