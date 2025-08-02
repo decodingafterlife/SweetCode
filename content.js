@@ -34,3 +34,9 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     createPopup(message.timeAdded, message.totalTime);
   }
 });
+
+function getProblemContext() {
+  const questionTitle = document.querySelector('.text-title-large a.no-underline').innerText;
+  const questionContent = document.querySelector('div[class*="_1l1MA"]').innerText;
+  return `Title: ${questionTitle}\n\n${questionContent}`;
+}

@@ -148,6 +148,26 @@ function updateTimeAllowed(difficulty) {
   }
 }
 
+// Listen for time deduction messages
+chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+  if (message.type === 'deductTime') {
+    timeAllowed -= message.cost * 60; // Convert minutes to seconds
+    chrome.storage.local.set({ timeAllowed });
+  }
+});
+
+function isLeetCodeProblemPage(url) {
+  return url && url.includes("leetcode.com/problems/");
+}
+
+chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
+  if (tab.url && isLeetCodeProblemPage(tab.url)) {
+    chrome.action.enable(tabId);
+  } else {
+    chrome.action.disable(tabId);
+  }
+});
+
 // Function that will be injected into the page
 function getDifficulty() {
   const difficultyElement = document.querySelector('div[class*="text-difficulty-"]');
@@ -168,7 +188,8 @@ function isSocialMediaMainPage(url) {
     const twitterPattern = /^(www\.)?twitter\.com\/?($|\/home|\/explore|\/notifications|\/messages|\/i\/|\/[^/]+$)/i;
     const xPattern = /^(www\.)?x\.com\/?($|\/home|\/explore|\/notifications|\/messages|\/i\/|\/[^/]+$)/i;
     const facebookPattern = /^(www\.)?facebook\.com\/?($|\/profile|\/groups|\/marketplace|\/watch|\/gaming|\/messages|\/notifications|\/feed|\/photos|\/videos)/i;
-    
+    const webnovelPattern =  /^(www\.)?webnovel\.com\/?.*/i; 
+    const novelbinPattern =  /^(www\.)?novelbin\.com\/?.*/i; 
     // Explicitly exclude login and authentication pages
     const excludePatterns = [
       /accounts\.google\.com/,
@@ -195,7 +216,9 @@ function isSocialMediaMainPage(url) {
       (urlObj.hostname === 'instagram.com' || urlObj.hostname === 'www.instagram.com') && instagramPattern.test(urlObj.host + urlObj.pathname) ||
       (urlObj.hostname === 'twitter.com' || urlObj.hostname === 'www.twitter.com') && twitterPattern.test(urlObj.host + urlObj.pathname) ||
       (urlObj.hostname === 'x.com' || urlObj.hostname === 'www.x.com') && xPattern.test(urlObj.host + urlObj.pathname) || // Include x.com for Twitter
-      (urlObj.hostname === 'facebook.com' || urlObj.hostname === 'www.facebook.com') && facebookPattern.test(urlObj.host + urlObj.pathname)
+      (urlObj.hostname === 'facebook.com' || urlObj.hostname === 'www.facebook.com') && facebookPattern.test(urlObj.host + urlObj.pathname) ||
+      (urlObj.hostname === 'webnovel.com' || urlObj.hostname === 'www.webnovel.com') && webnovelPattern.test(urlObj.host + urlObj.pathname) ||
+      (urlObj.hostname === 'novelbin.com' || urlObj.hostname === 'www.novelbin.com') && novelbinPattern.test(urlObj.host + urlObj.pathname)
     );
   } catch (e) {
     console.error('Error parsing URL:', e);

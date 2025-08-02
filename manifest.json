@@ -11,13 +11,17 @@
     "tabs",
     "notifications"
   ],
+  "action": {
+    "default_popup": "popup.html"
+  },
   "host_permissions": [
     "https://leetcode.com/*",
     "https://www.youtube.com/*",
     "https://www.instagram.com/*",
     "https://www.facebook.com/*",
     "https://www.twitter.com/*",
-    "https://www.x.com/*"
+    "https://www.x.com/*",
+    "https://api.groq.com/*"
   ],
   "background": {
     "service_worker": "background.js"

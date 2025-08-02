@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>SweetCode AI Assistant</title>
+  <link rel="stylesheet" type="text/css" href="popup.css">
+</head>
+<body>
+  <div class="container">
+    <h1>AI Assistant</h1>
+    <div class="settings">
+      <label for="api-key">Groq API Key:</label>
+      <input type="password" id="api-key" placeholder="Enter your Groq API key">
+      <label for="model-select">Select Model:</label>
+      <select id="model-select">
+        <option value="llama3-8b-8192">Llama3-8b</option>
+        <option value="gemma-7b-it">Gemma-7b</option>
+        <option value="mixtral-8x7b-32768">Mixtral-8x7b</option>
+      </select>
+    </div>
+    <div class="hints">
+      <button id="ordinary-hint" data-cost="2">Ordinary Hint (-2 mins)</button>
+      <button id="advanced-hint" data-cost="3">Advanced Hint (-3 mins)</button>
+      <button id="expert-hint" data-cost="5">Expert Hint (-5 mins)</button>
+    </div>
+    <div id="hint-container" class="hidden">
+      <h2>Hint:</h2>
+      <p id="hint-text"></p>
+    </div>
+    <div id="error-container" class="hidden">
+      <p id="error-text"></p>
+    </div>
+  </div>
+  <script src="popup.js"></script>
+</body>
+</html>
