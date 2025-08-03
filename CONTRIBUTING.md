@@ -126,6 +126,6 @@ If you have any questions or need assistance, feel free to:
 - Open an issue in the repository
 - Contact the maintainers:
   - Project Admin: **Tanmay Shingavi** `tanmayshingavi1@gmail.com`
-  - Mentor: **Anshi Agrawal** `https://www.linkedin.com/in/anshiagrawal22/`
+  - Mentor: <a href="https://www.linkedin.com/in/anshiagrawal22/">**Anshi Agrawal**<a> 
 
 Thank you for contributing to SweetCode! 🍭
