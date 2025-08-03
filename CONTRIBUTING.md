@@ -12,18 +12,6 @@ We welcome contributions from everyone – beginners, experts, and open-source e
 
 Click on the **Fork** button at the top-right of [this repo](https://github.com/decodingafterlife/SweetCode) to create a personal copy of the repository under your GitHub account.
 
-#### 🔄 Syncing the Fork
-
- Before making a Pull Request, always ensure your fork is up to date with the original repository. This helps prevent merge conflicts and keeps your changes aligned with the latest code.
-
-You can easily sync your fork using GitHub’s web interface:
-1. Go to **your forked repository** on GitHub.  
-2. On the top right, just beside the green **Code** button, you'll find:
-   - A **Contribute** button (with a branching icon)  
-   - A **Sync fork** button (with a circular arrow icon)  
-3. Click on **Sync fork** → **Update branch**  
-   to pull the latest changes from the main repository into your fork.
-
 ### 2. Clone the Repository
 
 Use the following command to clone your forked repo:
@@ -123,8 +111,6 @@ Points are awarded for each merged PR based on the level assigned to the issue.
 
 If you have any questions or need assistance, feel free to:
 - Open an issue in the repository
-- Contact the maintainers:
-  - Project Admin: **Tanmay Shingavi** `tanmayshingavi1@gmail.com`
-  - Mentor: **Anshi Agrawal** `https://www.linkedin.com/in/anshiagrawal22/`
+- Contact the maintainers at `tanmayshingavi1@gmail.com`
 
 Thank you for contributing to SweetCode! 🍭
