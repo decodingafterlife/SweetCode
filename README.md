@@ -1,5 +1,15 @@
 # SweetCode - Gamify LeetCode Practice
 
+<p align="center">
+  <a href="https://gssoc.girlscript.tech/">
+    <img src="https://github.com/decodingafterlife/SweetCode/blob/main/Images/GSSOC.jpeg" alt="GSSoC Logo" width="120">
+  </a>
+  <br>
+  <a href="https://gssoc.girlscript.tech/">
+    <img src="https://img.shields.io/badge/GSSoC-2025-orange.svg?style=for-the-badge" alt="GSSoC'25">
+  </a>
+</p>
+
 ## Overview
 SweetCode is a Chrome extension designed to gamify your LeetCode practice sessions. It rewards you with social media usage time based on the difficulty of the LeetCode problems you solve. Once installed, SweetCode helps you stay productive by allowing limited access to social media websites until your time runs out. Your time allowance resets daily.
 
