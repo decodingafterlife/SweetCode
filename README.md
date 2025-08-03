@@ -98,7 +98,7 @@ SweetCode is a Chrome extension designed to gamify your LeetCode practice sessio
 - The extension currently supports Instagram, YouTube, Facebook, Twitter/X by default, with customization options to add others like LinkedIn.
 
 ## Contributing
-Feel free to fork this repository and submit pull requests to enhance the functionality of SweetCode. Suggestions for additional features are welcome!
+Please go through [CONTRIBUTING.md](https://github.com/decodingafterlife/SweetCode/blob/main/CONTRIBUTING.md) and follow the [Code of Conduct](https://github.com/decodingafterlife/SweetCode/blob/main/CODE_OF_CONDUCT.md)
 
 ## License
 This project is licensed under the MIT License. See the `LICENSE` file for details.
