@@ -61,6 +61,7 @@ Now make the necessary changes or additions in your code editor.
 ### 6. Stage and Commit Your Changes
 
 ```bash
+git pull
 git add .
 git commit -m "Descriptive message about your changes"
 ```
