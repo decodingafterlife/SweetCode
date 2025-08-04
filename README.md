@@ -13,15 +13,31 @@
 ## Overview
 SweetCode is a Chrome extension designed to gamify your LeetCode practice sessions. It rewards you with social media usage time based on the difficulty of the LeetCode problems you solve. Once installed, SweetCode helps you stay productive by allowing limited access to social media websites until your time runs out. Your time allowance resets daily.
 
+**New Feature**: AI Hint Assistant - Get helpful hints for LeetCode problems in exchange for your earned social media time!
+
 ## Have a look
-![alt text](https://github.com/decodingafterlife/SweetCode/blob/main/Images/popup.png?raw=true)
-![alt text](https://github.com/decodingafterlife/SweetCode/blob/main/Images/block.png?raw=true)
+
+### AI Assistant Interface
+![AI Assistant Popup](https://github.com/decodingafterlife/SweetCode/blob/main/Images/ai-assistant-popup.png?raw=true)
+
+### Hint System
+![Hint Display](https://github.com/decodingafterlife/SweetCode/blob/main/Images/hint-display.png?raw=true)
+
+### Social Media Blocking
+![Blocked Page](https://github.com/decodingafterlife/SweetCode/blob/main/Images/blocked-page.png?raw=true)
+
+### Success Rewards
+![Success Reward](https://github.com/decodingafterlife/SweetCode/blob/main/Images/success-reward.png?raw=true)
 
 ## Key Features
 - **Earn Rewards**: Gain social media time based on LeetCode problem difficulty:
   - Easy: 10 minutes
   - Medium: 20 minutes
   - Hard: 40 minutes
+- **AI Hint Assistant**: Get hints for LeetCode problems using AI (costs social media time):
+  - Ordinary Hint: 2 minutes
+  - Advanced Hint: 3 minutes
+  - Expert Hint: 5 minutes
 - **Automatic Reset**: Time allowance resets every day.
 - **Controlled Access**: Only allows access to social media websites when time is available.
 - **Customizable**: Easily modify time rewards or add/remove social media platforms.
@@ -45,28 +61,71 @@ SweetCode is a Chrome extension designed to gamify your LeetCode practice sessio
 3. Click **Load unpacked** and select the directory where you cloned the repository.
 4. The extension will now appear in your extensions list.
 
+### Setup AI Hint Assistant
+
+#### 1. Get Your Groq API Key
+To use the AI Hint Assistant feature, you'll need a Groq API key:
+
+1. **Sign up for Groq**: Visit [Groq's website](https://console.groq.com/) and create an account
+2. **Log in**: Use your credentials to access the Groq console
+3. **Navigate to API Keys**: Go to the [API Keys section](https://console.groq.com/keys) in your dashboard
+4. **Create a new key**: Click "Create API Key" and give it a descriptive name
+5. **Copy your key**: Save the generated API key securely - you'll need it for the extension
+
+#### 2. Configure the Extension
+1. Click on the SweetCode extension icon in your Chrome toolbar
+2. Enter your Groq API key in the "Groq API Key" field
+3. Select your preferred AI model from the dropdown:
+   - **Llama3-8b**: Fast and efficient for general hints
+   - **Gemma-9b**: Good balance of speed and quality
+   - **DeepSeek-70b**: Most advanced model for detailed hints
+4. The extension will automatically save your settings
+
+#### 3. Using the AI Hints
+1. Navigate to any LeetCode problem page
+2. Click the SweetCode extension icon to open the AI Assistant
+3. Choose your hint level:
+   - **Ordinary Hint**: Basic guidance to get you started
+   - **Advanced Hint**: More detailed approach suggestions
+   - **Expert Hint**: Comprehensive strategy and insights
+4. The AI will analyze the problem and provide a helpful hint
+5. The corresponding time cost will be deducted from your social media allowance
+
+**Note**: The hint buttons only appear when you're on a LeetCode problem page. The AI analyzes the problem context automatically to provide relevant hints.
+
+> 💡 **Tip**: See the screenshots above for visual examples of the AI Assistant interface and hint system in action.
+
 ### Customize Social Media Websites
+The extension now uses an improved helper function for better website management. To add or remove social media platforms:
+
 1. Open the `background.js` file in a text editor.
-2. Locate the `isSocialMediaMainPage` function and edit the patterns to include or remove specific social media platforms. The default configuration supports:
-   - YouTube
-   - Instagram
-   - Facebook
-   - Twitter/X
+2. Locate the `isSocialMediaMainPage` function (around line 177).
+3. The function now uses a more robust pattern-matching system with better URL parsing.
 
-   Example:
-   ```javascript
-   const linkedinPattern = /^(www\.)?linkedin\.com\/?.*/i; // Adding LinkedIn as a social media platform
-   ```
+To add a new social media platform, follow this pattern:
 
-3. Add the new pattern to the return statement in the `isSocialMediaMainPage` function:
-   ```javascript
-   return (
-     ... // Existing patterns
-     (urlObj.hostname === 'linkedin.com' || urlObj.hostname === 'www.linkedin.com') && linkedinPattern.test(urlObj.host + urlObj.pathname)
-   );
-   ```
+```javascript
+// Add your pattern definition
+const yourPlatformPattern = /^(www\.)?yourplatform\.com\/?.*/i;
 
-4. Save the file and reload the extension on the `chrome://extensions/` page.
+// Add to the return statement
+return (
+  // ... existing patterns ...
+  (urlObj.hostname === 'yourplatform.com' || urlObj.hostname === 'www.yourplatform.com') && yourPlatformPattern.test(urlObj.host + urlObj.pathname)
+);
+```
+
+**Example**: Adding LinkedIn support:
+```javascript
+const linkedinPattern = /^(www\.)?linkedin\.com\/?.*/i;
+
+return (
+  // ... existing patterns ...
+  (urlObj.hostname === 'linkedin.com' || urlObj.hostname === 'www.linkedin.com') && linkedinPattern.test(urlObj.host + urlObj.pathname)
+);
+```
+
+The helper function automatically excludes authentication pages, login forms, and other non-content pages to provide a better user experience.
 
 ### Adjust Reward Times
 1. Open the `background.js` file in a text editor.
@@ -91,11 +150,14 @@ SweetCode is a Chrome extension designed to gamify your LeetCode practice sessio
 ## How It Works
 1. **Track LeetCode Submissions**: The extension listens for LeetCode problem submissions. When you successfully submit a problem, it checks the difficulty level.
 2. **Reward Social Media Time**: Based on the problem difficulty, it adds the corresponding time to your social media allowance.
-3. **Allow Social Media Access**: If your time runs out, you can only access the main pages of social media platforms (e.g., Instagram, YouTube, Facebook, Twitter/X). Other websites remain accessible as usual.
+3. **AI Hint System**: When you request a hint, the extension sends the problem context to Groq's AI API and deducts time from your allowance.
+4. **Allow Social Media Access**: If your time runs out, you can only access the main pages of social media platforms (e.g., Instagram, YouTube, Facebook, Twitter/X). Other websites remain accessible as usual.
 
 ## Notes
 - Your social media time is tracked locally in Chrome's storage and resets daily.
-- The extension currently supports Instagram, YouTube, Facebook, Twitter/X by default, with customization options to add others like LinkedIn.
+- The extension currently supports Instagram, YouTube, Facebook, Twitter/X, WebNovel, and NovelBin by default, with customization options to add others.
+- The AI Hint Assistant requires an active internet connection and a valid Groq API key.
+- Hint costs are deducted immediately when you request them, regardless of whether you use the hint or not.
 
 ## Contributing
 Please go through [CONTRIBUTING.md](https://github.com/decodingafterlife/SweetCode/blob/main/CONTRIBUTING.md) and follow the [Code of Conduct](https://github.com/decodingafterlife/SweetCode/blob/main/CODE_OF_CONDUCT.md)
