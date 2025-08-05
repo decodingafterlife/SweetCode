@@ -11,7 +11,7 @@
 </p>
 
 ## Overview
-SweetCode is a browser extension designed to gamify your LeetCode practice sessions by rewarding you with social media usage time based on the difficulty of the problems you solve. Once installed, it helps you stay productive by limiting access to social media websites until your earned time runs out, resetting daily. As part of its core experience, SweetCode also features an AI Hint Assistant that provides helpful hints for LeetCode problems in exchange for your earned social media time, making your learning both focused and efficient.
+SweetCode is a browser extension designed to gamify your LeetCode practice sessions by rewarding you with social media usage time based on the difficulty of the problems you solve. Once installed, it helps you stay productive by limiting access to social media websites until your earned time runs out, resetting daily.
 
 **New Feature**: AI Hint Assistant - Get helpful hints for LeetCode problems in exchange for your earned social media time.
 
