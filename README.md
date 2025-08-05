@@ -11,33 +11,33 @@
 </p>
 
 ## Overview
-SweetCode is a Chrome extension designed to gamify your LeetCode practice sessions. It rewards you with social media usage time based on the difficulty of the LeetCode problems you solve. Once installed, SweetCode helps you stay productive by allowing limited access to social media websites until your time runs out. Your time allowance resets daily.
+SweetCode is a Chrome extension designed to gamify your LeetCode practice sessions by rewarding you with social media usage time based on the difficulty of the problems you solve. Once installed, it helps you stay productive by limiting access to social media websites until your earned time runs out, resetting daily. As part of its core experience, SweetCode also features an AI Hint Assistant that provides helpful hints for LeetCode problems in exchange for your earned social media time, making your learning both focused and efficient.
 
-**New Feature**: AI Hint Assistant - Get helpful hints for LeetCode problems in exchange for your earned social media time!
+**New Feature**: AI Hint Assistant - Get helpful hints for LeetCode problems in exchange for your earned social media time.
 
 ## Have a look
 
 ### AI Assistant Interface
-![AI Assistant Popup](https://github.com/decodingafterlife/SweetCode/blob/main/Images/ai-assistant-popup.png?raw=true)
+![AI Assistant Popup](https://github.com/anaypatil101/SweetCode/blob/docs/update-readme-ai-features/Images/ai-assistant-popup.png?raw=true)
 
 ### Hint System
-![Hint Display](https://github.com/decodingafterlife/SweetCode/blob/main/Images/hint-display.png?raw=true)
+![Hint Display](https://github.com/anaypatil101/SweetCode/blob/docs/update-readme-ai-features/Images/hint-display.png?raw=true)
 
 ### Social Media Blocking
-![Blocked Page](https://github.com/decodingafterlife/SweetCode/blob/main/Images/blocked-page.png?raw=true)
+![Blocked Page](https://github.com/anaypatil101/SweetCode/blob/docs/update-readme-ai-features/Images/blocked-page.png?raw=true)
 
 ### Success Rewards
-![Success Reward](https://github.com/decodingafterlife/SweetCode/blob/main/Images/success-reward.png?raw=true)
+![Success Reward](https://github.com/anaypatil101/SweetCode/blob/docs/update-readme-ai-features/Images/success-reward.png?raw=true)
 
 ## Key Features
 - **Earn Rewards**: Gain social media time based on LeetCode problem difficulty:
-  - Easy: 10 minutes
-  - Medium: 20 minutes
-  - Hard: 40 minutes
+  - Easy: 10 minutes.
+  - Medium: 20 minutes.
+  - Hard: 40 minutes.
 - **AI Hint Assistant**: Get hints for LeetCode problems using AI (costs social media time):
-  - Ordinary Hint: 2 minutes
-  - Advanced Hint: 3 minutes
-  - Expert Hint: 5 minutes
+  - Ordinary Hint: 2 minutes.
+  - Advanced Hint: 3 minutes.
+  - Expert Hint: 5 minutes.
 - **Automatic Reset**: Time allowance resets every day.
 - **Controlled Access**: Only allows access to social media websites when time is available.
 - **Customizable**: Easily modify time rewards or add/remove social media platforms.
@@ -66,30 +66,30 @@ SweetCode is a Chrome extension designed to gamify your LeetCode practice sessio
 #### 1. Get Your Groq API Key
 To use the AI Hint Assistant feature, you'll need a Groq API key:
 
-1. **Sign up for Groq**: Visit [Groq's website](https://console.groq.com/) and create an account
-2. **Log in**: Use your credentials to access the Groq console
-3. **Navigate to API Keys**: Go to the [API Keys section](https://console.groq.com/keys) in your dashboard
-4. **Create a new key**: Click "Create API Key" and give it a descriptive name
-5. **Copy your key**: Save the generated API key securely - you'll need it for the extension
+1. **Sign up for Groq**: Visit [Groq's website](https://console.groq.com/) and create an account.
+2. **Log in**: Use your credentials to access the Groq console.
+3. **Navigate to API Keys**: Go to the [API Keys section](https://console.groq.com/keys) in your dashboard.
+4. **Create a new key**: Click "Create API Key" and give it a descriptive name.
+5. **Copy your key**: Save the generated API key securely - you'll need it for the extension.
 
 #### 2. Configure the Extension
-1. Click on the SweetCode extension icon in your Chrome toolbar
-2. Enter your Groq API key in the "Groq API Key" field
+1. Click on the SweetCode extension icon in your Chrome toolbar.
+2. Enter your Groq API key in the "Groq API Key" field.
 3. Select your preferred AI model from the dropdown:
-   - **Llama3-8b**: Fast and efficient for general hints
-   - **Gemma-9b**: Good balance of speed and quality
-   - **DeepSeek-70b**: Most advanced model for detailed hints
-4. The extension will automatically save your settings
+   - **Llama3-8b**: Fast and efficient for general hints.
+   - **Gemma-9b**: Good balance of speed and quality.
+   - **DeepSeek-70b**: Most advanced model for detailed hints.
+4. The extension will automatically save your settings.
 
 #### 3. Using the AI Hints
-1. Navigate to any LeetCode problem page
-2. Click the SweetCode extension icon to open the AI Assistant
+1. Navigate to any LeetCode problem page.
+2. Click the SweetCode extension icon to open the AI Assistant.
 3. Choose your hint level:
-   - **Ordinary Hint**: Basic guidance to get you started
-   - **Advanced Hint**: More detailed approach suggestions
-   - **Expert Hint**: Comprehensive strategy and insights
-4. The AI will analyze the problem and provide a helpful hint
-5. The corresponding time cost will be deducted from your social media allowance
+   - **Ordinary Hint**: Basic guidance to get you started.
+   - **Advanced Hint**: More detailed approach suggestions.
+   - **Expert Hint**: Comprehensive strategy and insights.
+4. The AI will analyze the problem and provide a helpful hint.
+5. The corresponding time cost will be deducted from your social media allowance.
 
 **Note**: The hint buttons only appear when you're on a LeetCode problem page. The AI analyzes the problem context automatically to provide relevant hints.
 
