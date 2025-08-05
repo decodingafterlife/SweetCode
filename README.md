@@ -151,7 +151,7 @@ The helper function automatically excludes authentication pages, login forms, an
 1. **Track LeetCode Submissions**: The extension listens for LeetCode problem submissions. When you successfully submit a problem, it checks the difficulty level.
 2. **Reward Social Media Time**: Based on the problem difficulty, it adds the corresponding time to your social media allowance.
 3. **AI Hint System**: When you request a hint, the extension sends the problem context to Groq's AI API and deducts time from your allowance.
-4. **Allow Social Media Access**: If your time runs out, you can only access the main pages of social media platforms (e.g., Instagram, YouTube, Facebook, Twitter/X). Other websites remain accessible as usual.
+4. **Allow Social Media Access**: If your time runs out, you can no longer access the pages of social media platforms (e.g., Instagram, YouTube, Facebook, Twitter/X). Other websites remain accessible as usual.
 
 ## Notes
 - Your social media time is tracked locally in your browser's storage and resets daily.
