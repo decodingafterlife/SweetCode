@@ -11,7 +11,7 @@
 </p>
 
 ## Overview
-SweetCode is a Chrome extension designed to gamify your LeetCode practice sessions by rewarding you with social media usage time based on the difficulty of the problems you solve. Once installed, it helps you stay productive by limiting access to social media websites until your earned time runs out, resetting daily. As part of its core experience, SweetCode also features an AI Hint Assistant that provides helpful hints for LeetCode problems in exchange for your earned social media time, making your learning both focused and efficient.
+SweetCode is a browser extension designed to gamify your LeetCode practice sessions by rewarding you with social media usage time based on the difficulty of the problems you solve. Once installed, it helps you stay productive by limiting access to social media websites until your earned time runs out, resetting daily. As part of its core experience, SweetCode also features an AI Hint Assistant that provides helpful hints for LeetCode problems in exchange for your earned social media time, making your learning both focused and efficient.
 
 **New Feature**: AI Hint Assistant - Get helpful hints for LeetCode problems in exchange for your earned social media time.
 
@@ -38,7 +38,7 @@ SweetCode is a Chrome extension designed to gamify your LeetCode practice sessio
   - Ordinary Hint: 2 minutes.
   - Advanced Hint: 3 minutes.
   - Expert Hint: 5 minutes.
-- **Automatic Reset**: Time allowance resets every day.
+- **Automatic Reset**: Time allowance resets to zero every day.
 - **Controlled Access**: Only allows access to social media websites when time is available.
 - **Customizable**: Easily modify time rewards or add/remove social media platforms.
 
@@ -56,7 +56,7 @@ SweetCode is a Chrome extension designed to gamify your LeetCode practice sessio
    ```
 
 ### Load the Extension
-1. Open Chrome and navigate to `chrome://extensions/`.
+1. Open your Chromium-based browser (Chrome, Edge, Brave, etc.) and navigate to Extensions.
 2. Enable **Developer mode** in the top-right corner.
 3. Click **Load unpacked** and select the directory where you cloned the repository.
 4. The extension will now appear in your extensions list.
@@ -73,7 +73,7 @@ To use the AI Hint Assistant feature, you'll need a Groq API key:
 5. **Copy your key**: Save the generated API key securely - you'll need it for the extension.
 
 #### 2. Configure the Extension
-1. Click on the SweetCode extension icon in your Chrome toolbar.
+1. Click on the SweetCode extension icon in your browser toolbar.
 2. Enter your Groq API key in the "Groq API Key" field.
 3. Select your preferred AI model from the dropdown:
    - **Llama3-8b**: Fast and efficient for general hints.
@@ -145,7 +145,7 @@ The helper function automatically excludes authentication pages, login forms, an
      'Hard': 30
    };
    ```
-4. Save the file and reload the extension on the `chrome://extensions/` page.
+4. Save the file and reload the extension on the extensions page.
 
 ## How It Works
 1. **Track LeetCode Submissions**: The extension listens for LeetCode problem submissions. When you successfully submit a problem, it checks the difficulty level.
@@ -154,7 +154,7 @@ The helper function automatically excludes authentication pages, login forms, an
 4. **Allow Social Media Access**: If your time runs out, you can only access the main pages of social media platforms (e.g., Instagram, YouTube, Facebook, Twitter/X). Other websites remain accessible as usual.
 
 ## Notes
-- Your social media time is tracked locally in Chrome's storage and resets daily.
+- Your social media time is tracked locally in your browser's storage and resets daily.
 - The extension currently supports Instagram, YouTube, Facebook, Twitter/X, WebNovel, and NovelBin by default, with customization options to add others.
 - The AI Hint Assistant requires an active internet connection and a valid Groq API key.
 - Hint costs are deducted immediately when you request them, regardless of whether you use the hint or not.
@@ -162,10 +162,5 @@ The helper function automatically excludes authentication pages, login forms, an
 ## Contributing
 Please go through [CONTRIBUTING.md](https://github.com/decodingafterlife/SweetCode/blob/main/CONTRIBUTING.md) and follow the [Code of Conduct](https://github.com/decodingafterlife/SweetCode/blob/main/CODE_OF_CONDUCT.md)
 
-## License
-This project is licensed under the MIT License. See the `LICENSE` file for details.
 
----
-
-Enjoy productive coding sessions and guilt-free social media breaks with SweetCode!
 
