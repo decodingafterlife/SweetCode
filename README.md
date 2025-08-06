@@ -18,16 +18,16 @@ SweetCode is a browser extension designed to gamify your LeetCode practice sessi
 ## Have a look
 
 ### AI Assistant Interface
-![AI Assistant Popup](https://github.com/anaypatil101/SweetCode/blob/docs/update-readme-ai-features/Images/ai-assistant-popup.png?raw=true)
+![AI Assistant Popup](https://github.com/decodingafterlife/SweetCode/blob/main/Images/ai-assistant-popup.png?raw=true)
 
 ### Hint System
-![Hint Display](https://github.com/anaypatil101/SweetCode/blob/docs/update-readme-ai-features/Images/hint-display.png?raw=true)
+![Hint Display](https://github.com/decodingafterlife/SweetCode/blob/main/Images/hint-display.png?raw=true)
 
 ### Social Media Blocking
-![Blocked Page](https://github.com/anaypatil101/SweetCode/blob/docs/update-readme-ai-features/Images/blocked-page.png?raw=true)
+![Blocked Page](https://github.com/decodingafterlife/SweetCode/blob/main/Images/blocked-page.png?raw=true)
 
 ### Success Rewards
-![Success Reward](https://github.com/anaypatil101/SweetCode/blob/docs/update-readme-ai-features/Images/success-reward.png?raw=true)
+![Success Reward](https://github.com/decodingafterlife/SweetCode/blob/main/Images/success-reward.png?raw=true)
 
 ## Key Features
 - **Earn Rewards**: Gain social media time based on LeetCode problem difficulty:
