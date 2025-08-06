@@ -1,7 +1,7 @@
 let timeAllowed = 0;
 let lastResetDate = new Date().toDateString();
 
-// Reset timer daily
+// Daily reset functionality
 function checkAndResetDaily() {
   const currentDate = new Date().toDateString();
   if (currentDate !== lastResetDate) {
@@ -11,28 +11,27 @@ function checkAndResetDaily() {
   }
 }
 
-// Initialize state from storage
+// Load saved data on startup
 chrome.storage.local.get(['timeAllowed', 'lastResetDate'], (result) => {
   timeAllowed = result.timeAllowed || 0;
   lastResetDate = result.lastResetDate || new Date().toDateString();
   checkAndResetDaily();
 });
 
-// Listen for LeetCode submissions
+// Watch for LeetCode submissions
 chrome.webRequest.onCompleted.addListener(
   function(details) {
     const url = details.url;
     const pattern = new RegExp("https:\\/\\/leetcode.com\\/problems\\/[^/]+\\/submit\\/");
     if (pattern.test(url)) {
       const problem = url.split("/")[4];
-      // Add delay to ensure submission is processed
       setTimeout(() => checkSubmission(problem), 1500);
     }
   },
   { urls: ["*://*.leetcode.com/*"] }
 );
 
-// Check submission result and difficulty
+// Check if submission was accepted and award time
 async function checkSubmission(problem) {
   try {
     const response = await fetch(`https://leetcode.com/api/submissions/${problem}/`, {
@@ -49,24 +48,20 @@ async function checkSubmission(problem) {
 
     const data = await response.json();
     
-    // Validate submissions data
     if (!data.submissions_dump || !data.submissions_dump.length) {
-      console.log('No submissions found yet, retrying in 1.5 seconds...');
       setTimeout(() => checkSubmission(problem), 1500);
       return;
     }
     
-    // Get latest submission
     const submission = data.submissions_dump[0];
     if (!submission || !submission.id) {
-      console.log('Invalid submission data, retrying in 1.5 seconds...');
       setTimeout(() => checkSubmission(problem), 1500);
       return;
     }
 
     const submissionId = submission.id;
     
-    // Poll for result
+    // Check submission result
     let startTime = Date.now();
     const checkInterval = setInterval(async () => {
       try {
@@ -86,7 +81,6 @@ async function checkSubmission(problem) {
         
         if (checkData.state === "SUCCESS") {
           if (checkData.status_msg === "Accepted") {
-            // Get problem difficulty from content script
             chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
               if (tabs && tabs[0] && tabs[0].id) {
                 chrome.scripting.executeScript({
@@ -96,8 +90,6 @@ async function checkSubmission(problem) {
                   if (results && results[0] && results[0].result) {
                     const difficulty = results[0].result;
                     updateTimeAllowed(difficulty);
-                  } else {
-                    console.log('Could not determine problem difficulty');
                   }
                 });
               }
@@ -108,7 +100,6 @@ async function checkSubmission(problem) {
         
         if (Date.now() - startTime > 10000) {
           clearInterval(checkInterval);
-          console.log('Timeout while checking submission status');
         }
       } catch (error) {
         clearInterval(checkInterval);
@@ -120,7 +111,7 @@ async function checkSubmission(problem) {
   }
 }
 
-// Update allowed time based on difficulty
+// Award time based on problem difficulty
 function updateTimeAllowed(difficulty) {
   const timeRewards = {
     'Easy': 10,
@@ -130,28 +121,50 @@ function updateTimeAllowed(difficulty) {
   
   const timeAdded = timeRewards[difficulty];
   if (timeAdded) {
-    timeAllowed += timeAdded * 60; // Convert to seconds
+    timeAllowed += timeAdded * 60;
     chrome.storage.local.set({ timeAllowed });
 
-    // Send message to content script to show popup
-    chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+    // Show reward popup
+    chrome.tabs.query({active: true, currentWindow: true}, async function(tabs) {
       if (tabs && tabs[0] && tabs[0].id) {
-        chrome.tabs.sendMessage(tabs[0].id, {
-          type: 'showRewardPopup',
-          timeAdded: timeAdded,
-          totalTime: timeAllowed
-        }).catch(error => console.error('Error sending popup message:', error));
+        try {
+          await chrome.scripting.executeScript({
+            target: { tabId: tabs[0].id },
+            files: ['content.js']
+          });
+          
+          setTimeout(() => {
+            chrome.tabs.sendMessage(tabs[0].id, {
+              type: 'showRewardPopup',
+              timeAdded: timeAdded,
+              totalTime: timeAllowed
+            }).catch(error => {
+              chrome.notifications.create({
+                type: 'basic',
+                iconUrl: 'icon.png',
+                title: '🎉 LeetCode Success!',
+                message: `You earned ${timeAdded} minutes! Total: ${Math.floor(timeAllowed / 60)} minutes`
+              });
+            });
+          }, 100);
+          
+        } catch (injectionError) {
+          chrome.notifications.create({
+            type: 'basic',
+            iconUrl: 'icon.png',
+            title: '🎉 LeetCode Success!',
+            message: `You earned ${timeAdded} minutes! Total: ${Math.floor(timeAllowed / 60)} minutes`
+          });
+        }
       }
     });
-  } else {
-    console.log('Invalid difficulty level received:', difficulty);
   }
 }
 
-// Listen for time deduction messages
+// Handle hint button time deductions
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.type === 'deductTime') {
-    timeAllowed -= message.cost * 60; // Convert minutes to seconds
+    timeAllowed -= message.cost * 60;
     chrome.storage.local.set({ timeAllowed });
   }
 });
@@ -163,34 +176,31 @@ function isLeetCodeProblemPage(url) {
 chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
   if (tab.url && isLeetCodeProblemPage(tab.url)) {
     chrome.action.enable(tabId);
-  } else {
-    chrome.action.disable(tabId);
   }
 });
 
-// Function that will be injected into the page
+// Extract difficulty from LeetCode page
 function getDifficulty() {
   const difficultyElement = document.querySelector('div[class*="text-difficulty-"]');
   return difficultyElement ? difficultyElement.textContent : null;
 }
 
-// Helper function to check if URL is a social media main page
+// Check if URL is a time-wasting social media page
 function isSocialMediaMainPage(url) {
   if (!url) return false;
   
-  // Create URL object for better parsing
   try {
     const urlObj = new URL(url);
     
-    // Define patterns for main social media pages
     const youtubePattern = /^(www\.)?youtube\.com\/?($|\/watch|\/feed|\/trending|\/subscriptions|\/playlist|\/channel|\/c\/|\/user\/)/i;
     const instagramPattern = /^(www\.)?instagram\.com\/?($|\/p\/|\/reels\/|\/stories\/|\/explore\/)/i;
     const twitterPattern = /^(www\.)?twitter\.com\/?($|\/home|\/explore|\/notifications|\/messages|\/i\/|\/[^/]+$)/i;
     const xPattern = /^(www\.)?x\.com\/?($|\/home|\/explore|\/notifications|\/messages|\/i\/|\/[^/]+$)/i;
     const facebookPattern = /^(www\.)?facebook\.com\/?($|\/profile|\/groups|\/marketplace|\/watch|\/gaming|\/messages|\/notifications|\/feed|\/photos|\/videos)/i;
-    const webnovelPattern =  /^(www\.)?webnovel\.com\/?.*/i; 
-    const novelbinPattern =  /^(www\.)?novelbin\.com\/?.*/i; 
-    // Explicitly exclude login and authentication pages
+    const webnovelPattern = /^(www\.)?webnovel\.com\/?.*/i; 
+    const novelbinPattern = /^(www\.)?novelbin\.com\/?.*/i; 
+    
+    // Skip login and auth pages
     const excludePatterns = [
       /accounts\.google\.com/,
       /signin/,
@@ -205,17 +215,15 @@ function isSocialMediaMainPage(url) {
       /support/
     ];
 
-    // Check if URL matches any exclude patterns
     if (excludePatterns.some(pattern => pattern.test(urlObj.hostname) || pattern.test(urlObj.pathname))) {
       return false;
     }
 
-    // Check if URL matches social media patterns
     return (
       (urlObj.hostname === 'youtube.com' || urlObj.hostname === 'www.youtube.com') && youtubePattern.test(urlObj.host + urlObj.pathname) ||
       (urlObj.hostname === 'instagram.com' || urlObj.hostname === 'www.instagram.com') && instagramPattern.test(urlObj.host + urlObj.pathname) ||
       (urlObj.hostname === 'twitter.com' || urlObj.hostname === 'www.twitter.com') && twitterPattern.test(urlObj.host + urlObj.pathname) ||
-      (urlObj.hostname === 'x.com' || urlObj.hostname === 'www.x.com') && xPattern.test(urlObj.host + urlObj.pathname) || // Include x.com for Twitter
+      (urlObj.hostname === 'x.com' || urlObj.hostname === 'www.x.com') && xPattern.test(urlObj.host + urlObj.pathname) ||
       (urlObj.hostname === 'facebook.com' || urlObj.hostname === 'www.facebook.com') && facebookPattern.test(urlObj.host + urlObj.pathname) ||
       (urlObj.hostname === 'webnovel.com' || urlObj.hostname === 'www.webnovel.com') && webnovelPattern.test(urlObj.host + urlObj.pathname) ||
       (urlObj.hostname === 'novelbin.com' || urlObj.hostname === 'www.novelbin.com') && novelbinPattern.test(urlObj.host + urlObj.pathname)
@@ -226,7 +234,7 @@ function isSocialMediaMainPage(url) {
   }
 }
 
-// Update the blocking listener
+// Block social media when time runs out
 chrome.webNavigation.onBeforeNavigate.addListener(function(details) {
   checkAndResetDaily();
   
@@ -237,20 +245,92 @@ chrome.webNavigation.onBeforeNavigate.addListener(function(details) {
   }
 });
 
-// Update the time counter listener
+let activeTimers = {};
+
+// Start countdown timer on social media sites
 chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
-  if (changeInfo.status === 'complete' && isSocialMediaMainPage(tab.url)) {
-    const interval = setInterval(() => {
-      checkAndResetDaily();
-      if (timeAllowed > 0) {
-        timeAllowed--;
-        chrome.storage.local.set({ timeAllowed });
-      } else {
-        clearInterval(interval);
-        chrome.tabs.update(tabId, {
-          url: chrome.runtime.getURL('blocked.html')
-        });
-      }
-    }, 1000);
+  if (changeInfo.status === 'complete') {
+    if (activeTimers[tabId]) {
+      clearInterval(activeTimers[tabId]);
+      delete activeTimers[tabId];
+    }
+    
+    if (isSocialMediaMainPage(tab.url)) {
+      activeTimers[tabId] = setInterval(() => {
+        checkAndResetDaily();
+        if (timeAllowed > 0) {
+          timeAllowed--;
+          chrome.storage.local.set({ timeAllowed });
+        } else {
+          clearInterval(activeTimers[tabId]);
+          delete activeTimers[tabId];
+          chrome.tabs.update(tabId, {
+            url: chrome.runtime.getURL('blocked.html')
+          });
+        }
+      }, 1000);
+    }
   }
+});
+
+// Handle tab switching
+chrome.tabs.onActivated.addListener(function(activeInfo) {
+  chrome.tabs.get(activeInfo.tabId, function(tab) {
+    Object.keys(activeTimers).forEach(tabId => {
+      if (parseInt(tabId) !== activeInfo.tabId) {
+        clearInterval(activeTimers[tabId]);
+        delete activeTimers[tabId];
+      }
+    });
+    
+    if (activeTimers[activeInfo.tabId]) {
+      clearInterval(activeTimers[activeInfo.tabId]);
+      delete activeTimers[activeInfo.tabId];
+    }
+    
+    if (isSocialMediaMainPage(tab.url)) {
+      activeTimers[activeInfo.tabId] = setInterval(() => {
+        checkAndResetDaily();
+        if (timeAllowed > 0) {
+          timeAllowed--;
+          chrome.storage.local.set({ timeAllowed });
+        } else {
+          clearInterval(activeTimers[activeInfo.tabId]);
+          delete activeTimers[activeInfo.tabId];
+          chrome.tabs.update(activeInfo.tabId, {
+            url: chrome.runtime.getURL('blocked.html')
+          });
+        }
+      }, 1000);
+    }
+  });
+});
+
+// Cleanup when tabs close
+chrome.tabs.onRemoved.addListener(function(tabId) {
+  if (activeTimers[tabId]) {
+    clearInterval(activeTimers[tabId]);
+    delete activeTimers[tabId];
+  }
+});
+
+// Cleanup on extension shutdown
+chrome.runtime.onSuspend.addListener(function() {
+  Object.keys(activeTimers).forEach(tabId => {
+    if (activeTimers[tabId]) {
+      clearInterval(activeTimers[tabId]);
+      delete activeTimers[tabId];
+    }
+  });
+  
+  chrome.storage.local.set({ timeAllowed });
+});
+
+self.addEventListener('beforeunload', function() {
+  Object.keys(activeTimers).forEach(tabId => {
+    if (activeTimers[tabId]) {
+      clearInterval(activeTimers[tabId]);
+      delete activeTimers[tabId];
+    }
+  });
 });
