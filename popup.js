@@ -49,7 +49,15 @@ document.addEventListener('DOMContentLoaded', () => {
   advancedHintBtn.addEventListener('click', () => getHint('advanced'));
   expertHintBtn.addEventListener('click', () => getHint('expert'));
 
-  function getHint(level) {
+function getHint(level) {
+  // Read the current allowed time first
+  chrome.storage.local.get(['timeAllowed'], function(result) {
+    const timeAllowed = result.timeAllowed || 0;
+    if (timeAllowed <= 0) {
+      showError('You have no time left! Solve a LeetCode problem to earn more time.');
+      return;
+    }
+
     const apiKey = apiKeyInput.value;
     const model = modelSelect.value === 'custom' ? customModelInput.value.trim() : modelSelect.value;
 
@@ -81,7 +89,9 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       );
     });
-  }
+  });
+}
+
 
   async function fetchHint(apiKey, model, level, context) {
     const cost = {
@@ -125,6 +135,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
       // take away time for using hint
       chrome.runtime.sendMessage({ type: 'deductTime', cost: cost[level] });
+      loadTimerFromStorage();
     } catch (error) {
       showError(error.message);
     }
@@ -251,6 +262,13 @@ document.addEventListener('DOMContentLoaded', () => {
   // startup
   checkIfLeetCode();
   startRealtimeTimer();
+
+  chrome.storage.onChanged.addListener(function (changes, areaName) {
+  if (areaName === 'local' && changes.timeAllowed) {
+    updateTimerDisplay(changes.timeAllowed.newValue || 0);
+  }
+});
+
 });
 
 const hintsSection = document.querySelector('.hints');
@@ -288,6 +306,7 @@ function getProblemContext() {
 
 // timer 
 function updateTimerDisplay(timeInSeconds) {
+  timeInSeconds = Math.max(0, timeInSeconds);
   const timerElement = document.getElementById('timer');
   if (timerElement) {
     const minutes = Math.floor(timeInSeconds / 60);
@@ -304,5 +323,3 @@ function loadTimerFromStorage() {
   });
 }
 
-// load timer on popup open
-loadTimerFromStorage();
