@@ -17,7 +17,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const settingsView = document.getElementById('settings-view');
   const aiTitle = document.getElementById('ai-title');
 
-  // load saved settings
+  // Load saved settings (API key and model)
   chrome.storage.local.get(['groq_api_key', 'selected_model'], (result) => {
     if (result.groq_api_key) {
       apiKeyInput.value = result.groq_api_key;
@@ -36,7 +36,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  // save api key when user changes it
+  // Save API key on change
   apiKeyInput.addEventListener('change', () => {
     chrome.storage.local.set({ 'groq_api_key': apiKeyInput.value });
   });
@@ -44,7 +44,7 @@ document.addEventListener('DOMContentLoaded', () => {
   modelSelect.addEventListener('change', toggleCustomInput);
   toggleCustomInput(); // run once on startup
 
-  // hint button clicks
+  // Hint button clicks
   ordinaryHintBtn.addEventListener('click', () => getHint('ordinary'));
   advancedHintBtn.addEventListener('click', () => getHint('advanced'));
   expertHintBtn.addEventListener('click', () => getHint('expert'));
@@ -53,15 +53,15 @@ function getHint(level) {
   // Read the current allowed time first
   chrome.storage.local.get(['timeAllowed'], function(result) {
     const timeAllowed = result.timeAllowed || 0;
-    if (timeAllowed <= 0) {
-      showError('You have no time left! Solve a LeetCode problem to earn more time.');
+    if (timeAllowed <= -5) {
+      showError('You have reached the hint limit! Solve a LeetCode problem to earn more time.');
       return;
     }
 
     const apiKey = apiKeyInput.value;
     const model = modelSelect.value === 'custom' ? customModelInput.value.trim() : modelSelect.value;
 
-    // check if custom model field is empty
+    // Check if custom model field is empty
     if (modelSelect.value === 'custom' && !model) {
       showError('Please enter a custom model name.');
       return;
@@ -72,7 +72,7 @@ function getHint(level) {
       return;
     }
 
-    // get the current leetcode problem
+    // Get the current leetcode problem
     chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
       chrome.scripting.executeScript(
         {
@@ -133,7 +133,7 @@ function getHint(level) {
       hintContainer.classList.remove('hidden');
       errorContainer.classList.add('hidden');
 
-      // take away time for using hint
+      // Deduct time
       chrome.runtime.sendMessage({ type: 'deductTime', cost: cost[level] });
       loadTimerFromStorage();
     } catch (error) {
@@ -157,7 +157,7 @@ function getHint(level) {
     }
   }
 
-  // settings page navigation
+  // Settings page navigation
   settingsBtn.addEventListener('click', () => {
     document.querySelector('.container').style.display = 'none';
     settingsView.style.display = 'block';
@@ -167,20 +167,20 @@ function getHint(level) {
     settingsView.style.display = 'none';
     document.querySelector('.container').style.display = 'flex';
     
-    // make sure container keeps its layout
+    // Make sure container keeps its layout
     const container = document.querySelector('.container');
     if (container) {
       container.style.flexDirection = 'column';
       container.style.gap = '15px';
     }
     
-    // check if we're on leetcode again
+    // Check if we're on leetcode again
     setTimeout(() => {
       checkIfLeetCode();
     }, 50);
   });
 
-  // save settings button
+  // Save settings button
   const saveSettingsBtn = document.getElementById('save-settings');
   saveSettingsBtn.addEventListener('click', () => {
     const apiKey = apiKeyInput.value.trim();
@@ -214,12 +214,12 @@ function getHint(level) {
       if (isSocialMediaSite(currentUrl)) {
         loadTimerFromStorage();
         
-        // update timer every second
+        // Update timer every second
         popupTimerInterval = setInterval(function () {
           loadTimerFromStorage();
         }, 1000);
       } else {
-        // just load once for non-social media sites
+        // Just load once for non-social media sites
         loadTimerFromStorage();
       }
     });
@@ -244,7 +244,7 @@ function getHint(level) {
     }
   }
 
-  // listen for tab changes
+  // Listen for tab changes
   chrome.tabs.onActivated.addListener(function (activeInfo) {
     setTimeout(() => {
       startRealtimeTimer();
@@ -259,7 +259,7 @@ function getHint(level) {
     }
   });
 
-  // startup
+  // Startup
   checkIfLeetCode();
   startRealtimeTimer();
 
@@ -296,7 +296,7 @@ function checkIfLeetCode() {
   });
 }
 
-// problem details from leetcode page
+// Problem details from leetcode page
 function getProblemContext() {
   const titleElement = Array.from(document.querySelectorAll('a')).find(a => a.href.includes('/problems/'));
   const questionTitle = titleElement ? titleElement.innerText : 'Title not found';
@@ -304,7 +304,7 @@ function getProblemContext() {
   return `Title: ${questionTitle}\n\n${questionContent}`;
 }
 
-// timer 
+// Timer 
 function updateTimerDisplay(timeInSeconds) {
   timeInSeconds = Math.max(0, timeInSeconds);
   const timerElement = document.getElementById('timer');
