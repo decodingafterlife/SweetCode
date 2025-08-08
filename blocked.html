@@ -29,7 +29,7 @@
     }
 
     h1 {
-      color: #FC9F16;; /* a LeetCode-styled yellow (looks good on both themes) */
+      color: #FC9F16; /* LeetCode-styled yellow for both themes */
       font-size: 2em;
       margin-bottom: 20px;
       font-weight: bold;
@@ -39,6 +39,10 @@
       font-size: 16px;
       line-height: 1.4;
       margin: 10px 0;
+    }
+    a {
+      color: #2980b9;
+      text-decoration: underline;
     }
 
     /* Dark mode override */
@@ -53,6 +57,7 @@
         box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
       }
       h1 { color: #FC9F16; }
+      a { color: #81b0f9; }
     }
   </style>
 </head>
@@ -60,7 +65,7 @@
   <div class="message">
     <h1>Time's Up!</h1>
     <p>You've used all your social media time for today.</p>
-    <p>Solve more LeetCode problems to earn more time!</p>
+    <p>Solve more <a href="https://leetcode.com/problemset/" target="_blank">LeetCode</a> problems to earn more time!</p>
   </div>
 </body>
 </html>
