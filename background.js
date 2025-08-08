@@ -1,27 +1,39 @@
 let timeAllowed = 0; // social media time earned
-let lastResetTime = Date.now();
+let lastResetTime = Date.now();// Tracks rest for solvedProblems
+let lastDailyResetTime = Date.now(); // Tracks daily reset for timeAllowed 
 let solvedProblems = {};
 let resetPeriodDays = 7; // Default to a weekly reset
 
 // Reset timer based on customizable period
 function checkAndResetPeriodically() {
-  const currentTime = Date.now();
-  const oneDayInMs = 24 * 60 * 60 * 1000;
+   chrome.storage.local.get(['lastResetTime', 'lastDailyResetTime', 'timeAllowed', 'solvedProblems', 'resetPeriodDays'], data => {
+    let currentTime = Date.now();
+    let oneDayInMs = 24 * 60 * 60 * 1000;
 
-  if (currentTime - lastResetTime >= resetPeriodDays * oneDayInMs) {
-    timeAllowed = 0; // Reset earned time 
-    solvedProblems = {};
-    lastResetTime = currentTime;
-    chrome.storage.local.set({ timeAllowed, lastResetTime, solvedProblems });
-  }
+    // Daily reset
+    if (currentTime - (data.lastDailyResetTime || currentTime) >= oneDayInMs) {
+      data.timeAllowed = 0;
+      data.lastDailyResetTime = currentTime;
+    }
+
+    // Periodic solvedProblems reset
+    if (currentTime - (data.lastResetTime || currentTime) >= (data.resetPeriodDays || 7) * oneDayInMs) {
+      data.solvedProblems = {};
+      data.lastResetTime = currentTime;
+    }
+
+    chrome.storage.local.set(data);
+  });
 }
 
 // Initialize state from storage
-chrome.storage.local.get(['timeAllowed', 'lastResetTime', 'solvedProblems', 'resetPeriodDays'], (result) => {
+chrome.storage.local.get(['timeAllowed', 'lastResetTime',
+  'lastDailyResetTime', 'solvedProblems', 'resetPeriodDays'], (result) => {
   timeAllowed = result.timeAllowed || 0;
   lastResetTime = result.lastResetTime || Date.now();
+  lastDailyResetTime = result.lastDailyResetTime || Date.now(); 
   solvedProblems = result.solvedProblems || {};
-  resetPeriodDays = result.resetPeriodDays || 1;
+  resetPeriodDays = result.resetPeriodDays || 7;
   checkAndResetPeriodically();
 });
 
