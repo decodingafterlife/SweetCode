@@ -35,6 +35,15 @@ document.addEventListener('DOMContentLoaded', () => {
       toggleCustomInput();
     }
   });
+  
+  const resetPeriodInput = document.getElementById('reset-period');
+
+  chrome.storage.local.get(['resetPeriodDays'], (result) => {
+    if (result.resetPeriodDays) {
+      resetPeriodInput.value = result.resetPeriodDays;
+    }
+  });
+
 
   // Save API key on change
   apiKeyInput.addEventListener('change', () => {
@@ -195,12 +204,14 @@ function getHint(level) {
       alert('Please enter a custom model name before saving.');
       return;
     }
-
+    const resetPeriod = Math.max(1, parseInt(resetPeriodInput.value, 10) || 7);
     chrome.storage.local.set({
       groq_api_key: apiKey,
-      selected_model: selectedModel
+      selected_model: selectedModel,
+      resetPeriodDays: resetPeriod
     }, () => {
       alert('Settings saved successfully!');
+      chrome.runtime.sendMessage({ type: 'updateResetPeriod', period: resetPeriod });
     });
   });
 

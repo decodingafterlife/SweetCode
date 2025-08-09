@@ -1,23 +1,41 @@
-let timeAllowed = 0;
-let lastResetDate = new Date().toDateString();
+let timeAllowed = 0; // social media time earned
+let lastResetTime = Date.now();// Tracks rest for solvedProblems
+let lastDailyResetTime = Date.now(); // Tracks daily reset for timeAllowed 
+let solvedProblems = {};
+let resetPeriodDays = 7; // Default to a weekly reset
 
+// Reset timer based on customizable period
+function checkAndResetPeriodically() {
+   chrome.storage.local.get(['lastResetTime', 'lastDailyResetTime', 'timeAllowed', 'solvedProblems', 'resetPeriodDays'], data => {
+    let currentTime = Date.now();
+    let oneDayInMs = 24 * 60 * 60 * 1000;
 
-// Reset timer daily
-function checkAndResetDaily() {
-  const currentDate = new Date().toDateString();
-  if (currentDate !== lastResetDate) {
-    timeAllowed = 0;
-    lastResetDate = currentDate;
-    chrome.storage.local.set({ timeAllowed, lastResetDate });
-  }
+    // Daily reset
+    if (currentTime - (data.lastDailyResetTime || currentTime) >= oneDayInMs) {
+      data.timeAllowed = 0;
+      data.lastDailyResetTime = currentTime;
+    }
+
+    // Periodic solvedProblems reset
+    if (currentTime - (data.lastResetTime || currentTime) >= (data.resetPeriodDays || 7) * oneDayInMs) {
+      data.solvedProblems = {};
+      data.lastResetTime = currentTime;
+    }
+
+    chrome.storage.local.set(data);
+  });
 }
 
 
 // Initialize state from storage
-chrome.storage.local.get(['timeAllowed', 'lastResetDate'], (result) => {
+chrome.storage.local.get(['timeAllowed', 'lastResetTime',
+  'lastDailyResetTime', 'solvedProblems', 'resetPeriodDays'], (result) => {
   timeAllowed = result.timeAllowed || 0;
-  lastResetDate = result.lastResetDate || new Date().toDateString();
-  checkAndResetDaily();
+  lastResetTime = result.lastResetTime || Date.now();
+  lastDailyResetTime = result.lastDailyResetTime || Date.now(); 
+  solvedProblems = result.solvedProblems || {};
+  resetPeriodDays = result.resetPeriodDays || 7;
+  checkAndResetPeriodically();
 });
 
 
@@ -27,7 +45,7 @@ chrome.webRequest.onCompleted.addListener(
     const url = details.url;
     const pattern = new RegExp("https:\\/\\/leetcode.com\\/problems\\/[^/]+\\/submit\\/");
     if (pattern.test(url)) {
-      const problem = url.split("/")[4];
+      const problem = url.split("/")[4]; // Extract the problem name slug
       // Add delay to ensure submission is processed
       setTimeout(() => checkSubmission(problem), 1500);
     }
@@ -39,6 +57,7 @@ chrome.webRequest.onCompleted.addListener(
 // Check submission result and difficulty
 async function checkSubmission(problem) {
   try {
+    // Step 1: Fetch the user's submission history for the given problem
     const response = await fetch(`https://leetcode.com/api/submissions/${problem}/`, {
       headers: {
         'Accept': 'application/json',
@@ -46,36 +65,36 @@ async function checkSubmission(problem) {
       },
       credentials: 'include'
     });
-    
+    // Step 2: If request failed, stop and show error
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
 
-
-    const data = await response.json();
+    const data = await response.json();// Parse the JSON response
     
     // Validate submissions data
     if (!data.submissions_dump || !data.submissions_dump.length) {
       console.log('No submissions found yet, retrying in 1.5 seconds...');
-      setTimeout(() => checkSubmission(problem), 1500);
+      setTimeout(() => checkSubmission(problem), 1500);// Retry after 1.5s
       return;
     }
     
     // Get latest submission
     const submission = data.submissions_dump[0];
+    // Validate that it has an ID
     if (!submission || !submission.id) {
       console.log('Invalid submission data, retrying in 1.5 seconds...');
       setTimeout(() => checkSubmission(problem), 1500);
       return;
     }
 
-
-    const submissionId = submission.id;
+    const submissionId = submission.id;// Unique ID of the latest submission
     
-    // Poll for result
+    // Start polling the submission status (every 1 second)
     let startTime = Date.now();
     const checkInterval = setInterval(async () => {
       try {
+        //Check submission result using its ID
         const checkResponse = await fetch(`https://leetcode.com/submissions/detail/${submissionId}/check/`, {
           headers: {
             'Accept': 'application/json',
@@ -84,7 +103,7 @@ async function checkSubmission(problem) {
           credentials: 'include'
         });
         
-        if (!checkResponse.ok) {
+        if (!checkResponse.ok) { //If request fails, stop the interval
           throw new Error(`HTTP error! status: ${checkResponse.status}`);
         }
 
@@ -92,9 +111,10 @@ async function checkSubmission(problem) {
         const checkData = await checkResponse.json();
         
         if (checkData.state === "SUCCESS") {
-          if (checkData.status_msg === "Accepted") {
-            // Get problem difficulty from content script
-            chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+          if (checkData.status_msg === "Accepted") {// The problem was accepted!
+           // Check if the problem has already been solved this period
+           if(!solvedProblems[problem]){
+             chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
               if (tabs && tabs[0] && tabs[0].id) {
                 chrome.scripting.executeScript({
                   target: { tabId: tabs[0].id },
@@ -103,24 +123,32 @@ async function checkSubmission(problem) {
                   if (results && results[0] && results[0].result) {
                     const difficulty = results[0].result;
                     updateTimeAllowed(difficulty);
+                    // Add the problem to the solved list and save it
+                    solvedProblems[problem] = true;
+                    chrome.storage.local.set({ solvedProblems });
+                  } else {
+                    console.log('Could not determine problem difficulty');
                   }
                 });
               }
             });
+           }else{
+            console.log(`Problem "${problem}" already solved this period. No reward added.`);
+           }
           }
-          clearInterval(checkInterval);
+          clearInterval(checkInterval);  // Stop checking since we got a result
         }
         
-        if (Date.now() - startTime > 10000) {
+        if (Date.now() - startTime > 10000) {//Timeout after 10 seconds if no success
           clearInterval(checkInterval);
           console.log('Timeout while checking submission status');
         }
-      } catch (error) {
+      } catch (error) { // Stop polling if there's an error
         clearInterval(checkInterval);
         console.error('Error checking submission status:', error);
       }
     }, 1000);
-  } catch (error) {
+  } catch (error) {     // If initial fetch fails, log the error
     console.error('Error fetching submission:', error);
   }
 }
@@ -253,7 +281,7 @@ function isSocialMediaMainPage(url) {
       (urlObj.hostname === 'webnovel.com' || urlObj.hostname === 'www.webnovel.com') && webnovelPattern.test(urlObj.host + urlObj.pathname) ||
       (urlObj.hostname === 'novelbin.com' || urlObj.hostname === 'www.novelbin.com') && novelbinPattern.test(urlObj.host + urlObj.pathname)
     );
-  } catch (e) {
+  } catch (e) { // Handle malformed URL errors gracefully
     console.error('Error parsing URL:', e);
     return false;
   }
@@ -262,7 +290,7 @@ function isSocialMediaMainPage(url) {
 
 // Update the blocking listener
 chrome.webNavigation.onBeforeNavigate.addListener(function(details) {
-  checkAndResetDaily();
+  checkAndResetPeriodically();
   
   if (timeAllowed <= 0 && isSocialMediaMainPage(details.url)) {
     chrome.tabs.update(details.tabId, {
@@ -285,7 +313,7 @@ chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
     
     if (isSocialMediaMainPage(tab.url)) {
       activeTimers[tabId] = setInterval(() => {
-        checkAndResetDaily();
+        checkAndResetPeriodically();
         chrome.storage.local.get(['timeAllowed'], (result) => {
           let currentTime = result.timeAllowed || 0;
           if (currentTime > 0) {
@@ -305,6 +333,17 @@ chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
   }
 });
 
+// Listen for messages to update the reset period
+chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+  if (message.type === 'updateResetPeriod') {
+    const newPeriod = Math.max(1, parseInt(message.period, 10));
+    if (!isNaN(newPeriod)) {
+      resetPeriodDays = newPeriod;
+      chrome.storage.local.set({ resetPeriodDays: newPeriod });
+      console.log(`✅ Reset period updated to ${newPeriod} days`);
+    }
+  }
+});
 
 // Handle tab switching
 chrome.tabs.onActivated.addListener(function(activeInfo) {
@@ -323,7 +362,7 @@ chrome.tabs.onActivated.addListener(function(activeInfo) {
     
     if (isSocialMediaMainPage(tab.url)) {
       activeTimers[activeInfo.tabId] = setInterval(() => {
-        checkAndResetDaily();
+        checkAndResetPeriodically();
         chrome.storage.local.get(['timeAllowed'], (result) => {
           let currentTime = result.timeAllowed || 0;
           if (currentTime > 0) {
