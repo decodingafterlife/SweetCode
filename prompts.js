@@ -1,83 +1,95 @@
 (() => {
   'use strict';
 
-  const HINT_PROMPTS = {
-    ordinary: {
-      systemPrompt: `You are a helpful LeetCode tutor providing ORDINARY level hints.
+const HINT_PROMPTS = {
+  ordinary: {
+    systemPrompt: `You are a helpful LeetCode tutor providing ORDINARY level hints.
 
 Your goal: Give a gentle nudge in the right direction without revealing too much.
+Rules:
+- FIRST LINE must be exactly: "Here's an Ordinary level hint..."
+- Do NOT write anything before that first line.
 - Focus on understanding the problem better
 - Suggest what data structures or concepts to consider
 - Ask guiding questions that help the student think
 - Keep it simple and encouraging
 - DO NOT provide code or detailed algorithms
+- STRICTLY respond in no more than 50 words. The first line counts as part of the 50 words.
+- Do not add filler or background text before or after the hint.`,
+    temperature: 0.3,
+    maxWords: 50
+  },
 
-Word limit: 50 words maximum.`,
-      temperature: 0.3,
-      maxWords: 50
-    },
-
-    advanced: {
-      systemPrompt: `You are an experienced LeetCode mentor providing ADVANCED level hints.
+  advanced: {
+    systemPrompt: `You are an experienced LeetCode mentor providing ADVANCED level hints.
 
 Your goal: Provide deeper and more specific guidance without fully solving the problem.
+Rules:
+- FIRST LINE must be exactly: "Here's an Advanced level hint..."
+- Do NOT write anything before that first line.
 - Explain the general approach or recognized problem pattern
 - Mention specific algorithms or techniques (e.g., "two pointers", "DFS with memoization")
 - Discuss time/space complexity considerations
 - Suggest how to break the problem into manageable steps
 - Avoid giving complete pseudo-code or direct answers
+- STRICTLY respond in no more than 75 words. The first line counts as part of the 75 words.
+- Do not add filler or background text before or after the hint.`,
+    temperature: 0.3,
+    maxWords: 75
+  },
 
-Word limit: 100 words maximum.`,
-      temperature: 0.3,
-      maxWords: 100
-    },
-
-    expert: {
-      systemPrompt: `You are a LeetCode expert providing EXPERT level hints.
+  expert: {
+    systemPrompt: `You are a LeetCode expert providing EXPERT level hints.
 
 Your goal: Give comprehensive strategic guidance for optimal problem-solving.
+Rules:
+- FIRST LINE must be exactly: "Here's an Expert level hint..."
+- Do NOT write anything before that first line.
 - Explain the optimal algorithm and why it works
 - Discuss alternative approaches and trade-offs
 - Analyze time and space complexity in detail
 - Mention important edge cases
 - Provide a high-level roadmap for the implementation
 - Let the student write the actual code
+- STRICTLY respond in no more than 100 words. The first line counts as part of the 100 words.
+- Do not add filler or background text before or after the hint.`,
+    temperature: 0.3,
+     maxWords: 100
+  }
+};
 
-Word limit: 150 words maximum.`,
-      temperature: 0.3,
-      maxWords: 150
-    }
-  };
 
-  function filterResponse(text) {
+  function filterResponse(text, maxWords) {
     if (!text || typeof text !== 'string') return '';
 
-    let cleaned = text;
-
+    let cleaned = text.trimStart();
     cleaned = cleaned.replace(/<think>[\s\S]*?<\/think>/gi, '');
     cleaned = cleaned.replace(/<reflection>[\s\S]*?<\/reflection>/gi, '');
     cleaned = cleaned.replace(/<[^>]+>/g, '');
-
     cleaned = cleaned.replace(/^(Assistant:|AI:|System:)\s*/i, '');
+    
+    const match = cleaned.match(/^Here(?:'s| is) an (Ordinary|Advanced|Expert) level hint.*$/im);
+    let firstLine = match ? match[0].trim() : '';
+    if (firstLine) {
+    const index = cleaned.indexOf(firstLine);
+    cleaned = cleaned.slice(index);
+  }
+  else {
     cleaned = cleaned.replace(/^\s*(?:Sure[,\.]?\s*)?(?:here(?:'s| is)\s+(?:a\s+)?)?(?:hint|suggestion|note|tip)\s*[:\-]?\s*/i, '');
-
-    cleaned = cleaned.replace(/^(?:Here['’]?s|Here is|You can)\b[\s\S]*?(?:\n{1,2}|$)/i, (m) => {
-      return m.length > 140 ? '' : m;
-    });
-
-    cleaned = cleaned.replace(/\n\s*\n\s*\n+/g, '\n\n');
-
-    cleaned = cleaned.trim();
-
-    return cleaned;
   }
 
-  function enforceWordLimit(content, maxWords) {
-    if (!content) return '';
-    const words = content.trim().split(/\s+/);
-    if (words.length <= maxWords) return content.trim();
-    return words.slice(0, maxWords).join(' ') + '...';
+  cleaned = cleaned.replace(/\n\s*\n\s*\n+/g, '\n\n').trim();
+
+  // Rare-case safety net for word limit
+  if (maxWords && Number.isFinite(maxWords)) {
+    const words = cleaned.split(/\s+/);
+    if (words.length > maxWords + 5) {
+      cleaned = words.slice(0, maxWords).join(' ') + '...';
+    }
   }
+
+  return cleaned;
+}
 
   function extractModelText(responseJson) {
     try {
@@ -91,8 +103,7 @@ Word limit: 150 words maximum.`,
         return responseJson.generations[0][0].text;
       }
 
-      const asString = JSON.stringify(responseJson);
-      return asString.slice(0, 1000);
+      return JSON.stringify(responseJson).slice(0, 1000);
     } catch (e) {
       return '';
     }
@@ -134,11 +145,8 @@ Word limit: 150 words maximum.`,
 
     const data = await resp.json();
     let raw = extractModelText(data);
-
-    raw = filterResponse(raw);
-    const finalHint = enforceWordLimit(raw, promptConfig.maxWords);
-
-    return finalHint;
+    raw = filterResponse(raw, promptConfig.maxWords);
+    return raw;
   };
 
 })();
