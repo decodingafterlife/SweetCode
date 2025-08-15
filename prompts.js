@@ -9,11 +9,12 @@ Your goal: Give a gentle nudge in the right direction without revealing too much
 Rules:
 - FIRST LINE must be exactly: "Here's an Ordinary level hint..."
 - Do NOT write anything before that first line.
-- Focus on understanding the problem better
-- Suggest what data structures or concepts to consider
-- Ask guiding questions that help the student think
-- Keep it simple and encouraging
-- DO NOT provide code or detailed algorithms
+- Focus on understanding the problem better.
+- Suggest what data structures or concepts to consider.
+- Ask guiding questions that help the student think.
+- Keep it simple, concise, and encouraging.
+- Do NOT provide code, pseudo-code, or partial algorithms.
+- Stop immediately when you reach 50 words. Do NOT exceed 50 words.
 - STRICTLY respond in no more than 50 words. The first line counts as part of the 50 words.
 - Do not add filler or background text before or after the hint.`,
     temperature: 0.3,
@@ -27,11 +28,12 @@ Your goal: Provide deeper and more specific guidance without fully solving the p
 Rules:
 - FIRST LINE must be exactly: "Here's an Advanced level hint..."
 - Do NOT write anything before that first line.
-- Explain the general approach or recognized problem pattern
-- Mention specific algorithms or techniques (e.g., "two pointers", "DFS with memoization")
-- Discuss time/space complexity considerations
-- Suggest how to break the problem into manageable steps
-- Avoid giving complete pseudo-code or direct answers
+- Explain the general approach or recognized problem pattern.
+- Mention specific algorithms or techniques (e.g., "two pointers", "DFS with memoization") without giving full implementation.
+- Discuss time/space complexity considerations.
+- Suggest how to break the problem into manageable steps.
+- Avoid giving complete pseudo-code or direct answers.
+- Stop immediately when you reach 75 words. Do NOT exceed 75 words.
 - STRICTLY respond in no more than 75 words. The first line counts as part of the 75 words.
 - Do not add filler or background text before or after the hint.`,
     temperature: 0.3,
@@ -45,12 +47,13 @@ Your goal: Give comprehensive strategic guidance for optimal problem-solving.
 Rules:
 - FIRST LINE must be exactly: "Here's an Expert level hint..."
 - Do NOT write anything before that first line.
-- Explain the optimal algorithm and why it works
-- Discuss alternative approaches and trade-offs
-- Analyze time and space complexity in detail
-- Mention important edge cases
-- Provide a high-level roadmap for the implementation
-- Let the student write the actual code
+- Explain the optimal algorithm and why it works.
+- Discuss alternative approaches and trade-offs.
+- Analyze time and space complexity in detail.
+- Mention important edge cases.
+- Provide a high-level roadmap for the implementation.
+- Let the student write the actual code.
+- Stop immediately when you reach 100 words. Do NOT exceed 100 words.
 - STRICTLY respond in no more than 100 words. The first line counts as part of the 100 words.
 - Do not add filler or background text before or after the hint.`,
     temperature: 0.3,
@@ -68,25 +71,11 @@ Rules:
     cleaned = cleaned.replace(/<[^>]+>/g, '');
     cleaned = cleaned.replace(/^(Assistant:|AI:|System:)\s*/i, '');
     
-    const match = cleaned.match(/^Here(?:'s| is) an (Ordinary|Advanced|Expert) level hint.*$/im);
-    let firstLine = match ? match[0].trim() : '';
-    if (firstLine) {
-    const index = cleaned.indexOf(firstLine);
-    cleaned = cleaned.slice(index);
+    const match = cleaned.match(/(Here's an (Ordinary|Advanced|Expert) level hint.*)/i);
+  if (match) {
+    cleaned = match[1] + ' ' + cleaned.slice(match.index + match[0].length).trim();
   }
-  else {
-    cleaned = cleaned.replace(/^\s*(?:Sure[,\.]?\s*)?(?:here(?:'s| is)\s+(?:a\s+)?)?(?:hint|suggestion|note|tip)\s*[:\-]?\s*/i, '');
-  }
-
   cleaned = cleaned.replace(/\n\s*\n\s*\n+/g, '\n\n').trim();
-
-  // Rare-case safety net for word limit
-  if (maxWords && Number.isFinite(maxWords)) {
-    const words = cleaned.split(/\s+/);
-    if (words.length > maxWords + 5) {
-      cleaned = words.slice(0, maxWords).join(' ') + '...';
-    }
-  }
 
   return cleaned;
 }
