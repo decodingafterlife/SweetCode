@@ -1,5 +1,5 @@
 let timeAllowed = 0; // social media time earned
-let lastResetTime = Date.now();// Tracks rest for solvedProblems
+let lastResetTime = Date.now();// Tracks reset for solvedProblems
 let lastDailyResetTime = Date.now(); // Tracks daily reset for timeAllowed 
 let solvedProblems = {};
 let resetPeriodDays = 7; // Default to a weekly reset
@@ -43,14 +43,14 @@ chrome.storage.local.get(['timeAllowed', 'lastResetTime',
 chrome.webRequest.onCompleted.addListener(
   function(details) {
     const url = details.url;
-    const pattern = new RegExp("https:\\/\\/leetcode.com\\/problems\\/[^/]+\\/submit\\/");
+    const pattern = new RegExp("https:\\/\\/leetcode.com\\/problems\\/[^/]+\\/submit\\/");// regular expression to match a very specific URL format
     if (pattern.test(url)) {
       const problem = url.split("/")[4]; // Extract the problem name slug
       // Add delay to ensure submission is processed
       setTimeout(() => checkSubmission(problem), 1500);
     }
   },
-  { urls: ["*://*.leetcode.com/*"] }
+  { urls: ["*://*.leetcode.com/*"] } //limits the listener to only requests made to LeetCode URLs.
 );
 
 
@@ -134,6 +134,28 @@ async function checkSubmission(problem) {
             });
            }else{
             console.log(`Problem "${problem}" already solved this period. No reward added.`);
+            chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+              if (tabs && tabs[0] && tabs[0].id) {
+                chrome.scripting.executeScript({
+                  target: { tabId: tabs[0].id },
+                  files: ['content.js']
+                }, () => {
+                  setTimeout(() => {
+                    chrome.tabs.sendMessage(tabs[0].id, {
+                      type: 'showAlreadySolvedNotification',
+                    }).catch(error => {
+                      // Fallback to a notification if popup fails
+                      chrome.notifications.create({
+                        type: 'basic',
+                        iconUrl: 'icon.png',
+                        title: '⚠ LeetCode Warning',
+                        message: `Problem "${problem}" has already been solved this period. No reward added.`
+                      });
+                    });
+                  }, 100);
+                });
+              }
+            });
            }
           }
           clearInterval(checkInterval);  // Stop checking since we got a result
@@ -215,7 +237,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 });
 
 
-function isLeetCodeProblemPage(url) {
+function isLeetCodeProblemPage(url) {// URL checker for LeetCode problem pages.
   return url && url.includes("leetcode.com/problems/");
 }
 
@@ -238,9 +260,8 @@ function getDifficulty() {
 function isSocialMediaMainPage(url) {
   if (!url) return false;
   
-   // Create URL object for better parsing
   try {
-    const urlObj = new URL(url);
+    const urlObj = new URL(url); // Create URL object for better parsing
     
     // Define patterns for main social media pages
     const youtubePattern = /^(www\.)?youtube\.com\/?($|\/watch|\/feed|\/trending|\/subscriptions|\/playlist|\/channel|\/c\/|\/user\/)/i;
@@ -348,14 +369,14 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 // Handle tab switching
 chrome.tabs.onActivated.addListener(function(activeInfo) {
   chrome.tabs.get(activeInfo.tabId, function(tab) {
-    Object.keys(activeTimers).forEach(tabId => {
+    Object.keys(activeTimers).forEach(tabId => { // Stop timers for all other tabs other than active tab
       if (parseInt(tabId) !== activeInfo.tabId) {
         clearInterval(activeTimers[tabId]);
         delete activeTimers[tabId];
       }
     });
     
-    if (activeTimers[activeInfo.tabId]) {
+    if (activeTimers[activeInfo.tabId]) { //Stop timer for the active tab (if it already has one)
       clearInterval(activeTimers[activeInfo.tabId]);
       delete activeTimers[activeInfo.tabId];
     }
@@ -394,14 +415,14 @@ chrome.tabs.onRemoved.addListener(function(tabId) {
 
 // Cleanup on extension shutdown
 chrome.runtime.onSuspend.addListener(function() {
-  Object.keys(activeTimers).forEach(tabId => {
-    if (activeTimers[tabId]) {
+  Object.keys(activeTimers).forEach(tabId => { //Stops all running countdown timers.
+    if (activeTimers[tabId]) { 
       clearInterval(activeTimers[tabId]);
       delete activeTimers[tabId];
     }
   });
   
-  chrome.storage.local.set({ timeAllowed });
+  chrome.storage.local.set({ timeAllowed }); //Saves the current remaining time (timeAllowed)
 });
 
 

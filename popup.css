@@ -365,3 +365,20 @@ body {
     color: #111 !important;
   }
 }
+/* Styles for the warning popup */
+.leetcode-warning-popup {
+    border-color: #f7b731; /* Orange border for warning */
+}
+.leetcode-warning-popup h3 {
+    color: #f7b731;
+}
+
+/* Styles for the warning popup in light mode */
+@media (prefers-color-scheme: light) {
+  .leetcode-warning-popup {
+      border-color: #f7b731 !important;
+  }
+  .leetcode-warning-popup h3 {
+      color: #f7b731 !important;
+  }
+}
