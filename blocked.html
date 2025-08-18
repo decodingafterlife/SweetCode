@@ -4,29 +4,59 @@
   <title>Time's Up!</title>
   <style>
     body {
-      font-family: Arial, sans-serif;
+      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
       height: 100vh;
       margin: 0;
-      background-color: #f0f0f0;
+      background-color: #f7f7f9;
+      color: #222;
+      transition: background 0.3s, color 0.3s;
     }
+
     .message {
       text-align: center;
-      padding: 20px;
-      background-color: white;
+      padding: 30px;
+      background-color: #fff;
+      border: 1px solid #d3d6db;
       border-radius: 8px;
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+      max-width: 400px;
+      margin: 20px;
     }
-    h1 { color: #e74c3c; }
-    p { color: #34495e; }
+
+    h1 {
+      color: #FC9F16;
+      font-size: 2em;
+      margin-bottom: 20px;
+      font-weight: bold;
+    }
+    p {
+      color: inherit;
+      font-size: 16px;
+      line-height: 1.4;
+      margin: 10px 0;
+    }
     a {
       color: #2980b9;
       text-decoration: underline;
     }
 
+    @media (prefers-color-scheme: dark) {
+      body {
+        background-color: #161616;
+        color: #fff;
+      }
+      .message {
+        background-color: #262626;
+        border: 1px solid #444;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+      }
+      h1 { color: #FC9F16; }
+      a { color: #81b0f9; }
+    }
   </style>
 </head>
 <body>
@@ -34,7 +64,6 @@
     <h1>Time's Up!</h1>
     <p>You've used all your social media time for today.</p>
     <p>Solve more <a href="https://leetcode.com/problemset/" target="_blank">LeetCode</a> problems to earn more time!</p>
-
   </div>
 </body>
 </html>

@@ -28,7 +28,10 @@
   },
   "content_scripts": [
     {
-      "matches": ["https://leetcode.com/*"],
+      "matches":  [
+      "https://leetcode.com/*",
+      "https://www.leetcode.com/*"
+    ],
       "js": ["content.js"],
       "css": ["popup.css"]
     }
