@@ -29,7 +29,7 @@ function createPopup(timeAdded, totalTime) {
 }
 
 //  Create a popup for already solved problems
-function createAlreadySolvedNotification() {
+function createAlreadySolvedNotification(resetPeriodDays) {
   const existingPopup = document.querySelector('.leetcode-reward-popup'); // Remove any existing popup
   if (existingPopup) {
     existingPopup.remove();
@@ -39,7 +39,7 @@ function createAlreadySolvedNotification() {
   popup.className = 'leetcode-reward-popup leetcode-warning-popup';
   popup.innerHTML = `
     <h3>⚠️ Already solved!</h3>
-    <p>This problem has been solved in the current period. No time added.</p>
+    <p>Problem was already solved in last ${resetPeriodDays} days, no reward added.</p>
   `;
   document.body.appendChild(popup);
 
@@ -56,7 +56,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.type === 'showRewardPopup') {
     createPopup(message.timeAdded, message.totalTime);
   }else if (message.type === 'showAlreadySolvedNotification') { 
-    createAlreadySolvedNotification();
+    createAlreadySolvedNotification(message.resetPeriodDays);
   }
 });
 

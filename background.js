@@ -56,123 +56,123 @@ chrome.webRequest.onCompleted.addListener(
 
 // Check submission result and difficulty
 async function checkSubmission(problem) {
-  try {
-    // Step 1: Fetch the user's submission history for the given problem
-    const response = await fetch(`https://leetcode.com/api/submissions/${problem}/`, {
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json'
-      },
-      credentials: 'include'
-    });
-    // Step 2: If request failed, stop and show error
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
+    try {
+        // Step 1: Fetch the user's submission history for the given problem
+        const response = await fetch(`https://leetcode.com/api/submissions/${problem}/`, {
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            credentials: 'include'
+        });
+        // Step 2: If request failed, stop and show error
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
 
     const data = await response.json();// Parse the JSON response
-    
-    // Validate submissions data
-    if (!data.submissions_dump || !data.submissions_dump.length) {
-      console.log('No submissions found yet, retrying in 1.5 seconds...');
+
+        // Validate submissions data
+        if (!data.submissions_dump || !data.submissions_dump.length) {
+            console.log('No submissions found yet, retrying in 1.5 seconds...');
       setTimeout(() => checkSubmission(problem), 1500);// Retry after 1.5s
-      return;
-    }
-    
-    // Get latest submission
-    const submission = data.submissions_dump[0];
-    // Validate that it has an ID
-    if (!submission || !submission.id) {
-      console.log('Invalid submission data, retrying in 1.5 seconds...');
-      setTimeout(() => checkSubmission(problem), 1500);
-      return;
-    }
-
-    const submissionId = submission.id;// Unique ID of the latest submission
-    
-    // Start polling the submission status (every 1 second)
-    let startTime = Date.now();
-    const checkInterval = setInterval(async () => {
-      try {
-        //Check submission result using its ID
-        const checkResponse = await fetch(`https://leetcode.com/submissions/detail/${submissionId}/check/`, {
-          headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json'
-          },
-          credentials: 'include'
-        });
-        
-        if (!checkResponse.ok) { //If request fails, stop the interval
-          throw new Error(`HTTP error! status: ${checkResponse.status}`);
+            return;
         }
 
+        // Get latest submission
+        const submission = data.submissions_dump[0];
 
-        const checkData = await checkResponse.json();
-        
-        if (checkData.state === "SUCCESS") {
-          if (checkData.status_msg === "Accepted") {// The problem was accepted!
-           // Check if the problem has already been solved this period
-           if(!solvedProblems[problem]){
-             chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-              if (tabs && tabs[0] && tabs[0].id) {
-                chrome.scripting.executeScript({
-                  target: { tabId: tabs[0].id },
-                  function: getDifficulty,
-                }, (results) => {
-                  if (results && results[0] && results[0].result) {
-                    const difficulty = results[0].result;
-                    updateTimeAllowed(difficulty);
-                    // Add the problem to the solved list and save it
-                    solvedProblems[problem] = true;
-                    chrome.storage.local.set({ solvedProblems });
-                  } else {
-                    console.log('Could not determine problem difficulty');
-                  }
+        // Validate that it has an ID
+        if (!submission || !submission.id) {
+            console.log('Invalid submission data, retrying in 1.5 seconds...');
+            setTimeout(() => checkSubmission(problem), 1500);
+            return;
+        }
+
+        const submissionId = submission.id; // Unique ID of the latest submission
+
+        // Start polling the submission status (every 1 second)
+        let startTime = Date.now();
+        const checkInterval = setInterval(async () => {
+            try {
+                // Check submission result using its ID
+                const checkResponse = await fetch(`https://leetcode.com/submissions/detail/${submissionId}/check/`, {
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    },
+                    credentials: 'include'
                 });
-              }
-            });
-           }else{
-            console.log(`Problem "${problem}" already solved this period. No reward added.`);
-            chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-              if (tabs && tabs[0] && tabs[0].id) {
-                chrome.scripting.executeScript({
-                  target: { tabId: tabs[0].id },
-                  files: ['content.js']
-                }, () => {
-                  setTimeout(() => {
-                    chrome.tabs.sendMessage(tabs[0].id, {
-                      type: 'showAlreadySolvedNotification',
-                    }).catch(error => {
-                      // Fallback to a notification if popup fails
-                      chrome.notifications.create({
-                        type: 'basic',
-                        iconUrl: 'icon.png',
-                        title: '⚠ LeetCode Warning',
-                        message: `Problem "${problem}" has already been solved this period. No reward added.`
-                      });
-                    });
-                  }, 100);
-                });
-              }
-            });
-           }
-          }
-          clearInterval(checkInterval);  // Stop checking since we got a result
-        }
-        
-        if (Date.now() - startTime > 10000) {//Timeout after 10 seconds if no success
-          clearInterval(checkInterval);
-          console.log('Timeout while checking submission status');
-        }
-      } catch (error) { // Stop polling if there's an error
-        clearInterval(checkInterval);
-        console.error('Error checking submission status:', error);
-      }
-    }, 1000);
-  } catch (error) {     // If initial fetch fails, log the error
-    console.error('Error fetching submission:', error);
-  }
+
+                if (!checkResponse.ok) { // If request fails, stop the interval
+                    throw new Error(`HTTP error! status: ${checkResponse.status}`);
+                }
+
+                const checkData = await checkResponse.json();
+
+                if (checkData.state === "SUCCESS") {
+                    if (checkData.status_msg === "Accepted") { // The problem was accepted!
+                        // Check if the problem has already been solved this period
+                        if (!solvedProblems[problem]) {
+                            chrome.tabs.query({ active: true, currentWindow: true }, function(tabs) {
+                                if (tabs && tabs[0] && tabs[0].id) {
+                                    chrome.scripting.executeScript({
+                                        target: { tabId: tabs[0].id },
+                                        function: getDifficulty,
+                                    }, (results) => {
+                                        if (results && results[0] && results[0].result) {
+                                            const difficulty = results[0].result;
+                                            updateTimeAllowed(difficulty);
+                                            // Add the problem to the solved list and save it
+                                            solvedProblems[problem] = true;
+                                            chrome.storage.local.set({ solvedProblems });
+                                        } else {
+                                            console.log('Could not determine problem difficulty');
+                                        }
+                                    });
+                                }
+                            });
+                        } else {
+                            console.log(`Problem "${problem}" was already solved in last ${resetPeriodDays} days. No reward added.`);
+                            chrome.tabs.query({ active: true, currentWindow: true }, function(tabs) {
+                                if (tabs && tabs[0] && tabs[0].id) {
+                                    chrome.scripting.executeScript({
+                                        target: { tabId: tabs[0].id },
+                                        files: ['content.js']
+                                    }, () => {
+                                        chrome.tabs.sendMessage(tabs[0].id, {
+                                            type: 'showAlreadySolvedNotification',
+                                            resetPeriodDays: resetPeriodDays
+                                        }).catch(error => {
+                                            // Fallback to a notification if popup fails
+                                            console.error('Failed to send message for notification:', error);
+                                            chrome.notifications.create({
+                                                type: 'basic',
+                                                iconUrl: 'icon.png',
+                                                title: '⚠ LeetCode Warning',
+                                                message: `Problem "${problem}" was already solved in last ${resetPeriodDays} days. No reward added.`
+                                            });
+                                        });
+                                    });
+                                }
+                            });
+                        }
+                    }
+                    clearInterval(checkInterval); // Stop checking since we got a result
+                }
+
+                if (Date.now() - startTime > 10000) { // Timeout after 10 seconds if no success
+                    clearInterval(checkInterval);
+                    console.log('Timeout while checking submission status');
+                }
+            } catch (error) { // Stop polling if there's an error
+                clearInterval(checkInterval);
+                console.error('Error checking submission status:', error);
+            }
+        }, 1000);
+    } catch (error) { // If initial fetch fails, log the error
+        console.error('Error fetching submission:', error);
+    }
 }
 
 
