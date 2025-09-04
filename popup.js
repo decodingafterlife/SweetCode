@@ -101,55 +101,28 @@ function getHint(level) {
   });
 }
 
+async function fetchHint(apiKey, model, level, context) {
+  const cost = {
+    ordinary: 2,
+    advanced: 3,
+    expert: 5,
+  };
 
-  async function fetchHint(apiKey, model, level, context) {
-    const cost = {
-      ordinary: 2,
-      advanced: 3,
-      expert: 5,
-    };
+  try {
+    // Use the global window.generateHint() from prompts.js
+    const hint = await window.generateHint(apiKey, model, level, context);
 
-    try {
-      const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${apiKey}`,
-        },
-        body: JSON.stringify({
-          model,
-          messages: [
-            {
-              role: 'system',
-              content: `You are an AI assistant for LeetCode. Provide a ${level} hint for the following problem. Do not solve the entire problem. Just provide a hint.`,
-            },
-            {
-              role: 'user',
-              content: context,
-            },
-          ],
-        }),
-      });
+    hintText.innerText = hint;
+    hintContainer.classList.remove('hidden');
+    errorContainer.classList.add('hidden');
 
-      if (!response.ok) {
-        throw new Error(`API request failed with status ${response.status}`);
-      }
-
-      const data = await response.json();
-      const hint = data.choices[0].message.content;
-
-      hintText.innerText = hint;
-      hintContainer.classList.remove('hidden');
-      errorContainer.classList.add('hidden');
-
-      // Deduct time
-      chrome.runtime.sendMessage({ type: 'deductTime', cost: cost[level] });
-      loadTimerFromStorage();
-    } catch (error) {
-      showError(error.message);
-    }
+    // Deduct time
+    chrome.runtime.sendMessage({ type: 'deductTime', cost: cost[level] });
+    loadTimerFromStorage();
+  } catch (error) {
+    showError(error.message);
   }
-
+}
   function showError(message) {
     errorText.innerText = message;
     errorContainer.classList.remove('hidden');
@@ -333,4 +306,3 @@ function loadTimerFromStorage() {
     updateTimerDisplay(timeAllowed);
   });
 }
-
