@@ -11,7 +11,7 @@
 </p>
 
 ## Overview
-SweetCode is a browser extension designed to gamify your LeetCode practice sessions by rewarding you with social media usage time based on the difficulty of the problems you solve. Once installed, it helps you stay productive by limiting access to social media websites until your earned time runs out, resetting daily.
+SweetCode is designed to make solving DSA problems easier and more accessible for everyone; whether you're a fresher, a software engineer, or completely new to programming. In its current form as a Web Extension, SweetCode gamifies your DSA journey by blocking social media websites and rewarding you with access time for every LeetCode problem you solve. Whenever you get stuck, SweetCode acts as your companion by providing personalised hints to help you progress.
 
 **New Feature**: AI Hint Assistant - Get helpful hints for LeetCode problems in exchange for your earned social media time.
 
@@ -20,14 +20,16 @@ SweetCode is a browser extension designed to gamify your LeetCode practice sessi
 ### AI Assistant Interface
 ![AI Assistant Popup](https://github.com/decodingafterlife/SweetCode/blob/main/Images/ai-assistant-popup.png?raw=true)
 
-### Hint System
-![Hint Display](https://github.com/decodingafterlife/SweetCode/blob/main/Images/hint-display.png?raw=true)
+### Settings
+![Settings](https://github.com/decodingafterlife/SweetCode/blob/main/Images/settings.png?raw=true)
 
 ### Social Media Blocking
 ![Blocked Page](https://github.com/decodingafterlife/SweetCode/blob/main/Images/blocked-page.png?raw=true)
 
-### Success Rewards
+### Rewards
 ![Success Reward](https://github.com/decodingafterlife/SweetCode/blob/main/Images/success-reward.png?raw=true)
+
+![Failed Reward](https://github.com/decodingafterlife/SweetCode/blob/main/Images/failure.png?raw=true)
 
 ## Key Features
 - **Earn Rewards**: Gain social media time based on LeetCode problem difficulty:
