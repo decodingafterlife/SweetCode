@@ -74,12 +74,13 @@ To use the AI Hint Assistant feature, you'll need a Groq API key:
 
 #### 2. Configure the Extension
 1. Click on the SweetCode extension icon in your browser toolbar.
-2. Enter your Groq API key in the "Groq API Key" field.
-3. Select your preferred AI model from the dropdown:
+2. Click on the gear icon to open Settings.
+3. Enter your Groq API key in the "Groq API Key" field.
+4. Select your preferred AI model from the dropdown:
    - **Llama3-8b**: Fast and efficient for general hints.
    - **Gemma-9b**: Good balance of speed and quality.
    - **DeepSeek-70b**: Most advanced model for detailed hints.
-4. The extension will automatically save your settings.
+5. The extension will automatically save your settings.
 
 #### 3. Using the AI Hints
 1. Navigate to any LeetCode problem page.
@@ -155,7 +156,7 @@ The helper function automatically excludes authentication pages, login forms, an
 
 ## Notes
 - Your social media time is tracked locally in your browser's storage and resets daily.
-- The extension currently supports Instagram, YouTube, Facebook, Twitter/X, WebNovel, and NovelBin by default, with customization options to add others.
+- The extension currently considers Instagram, YouTube, Facebook, Twitter/X, WebNovel, and NovelBin as social medias, with customization options to add others.
 - The AI Hint Assistant requires an active internet connection and a valid Groq API key.
 - Hint costs are deducted immediately when you request them, regardless of whether you use the hint or not.
 
