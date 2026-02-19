@@ -20,9 +20,6 @@ SweetCode is designed to make solving DSA problems easier and more accessible fo
 ### AI Assistant Interface
 ![AI Assistant Popup](https://github.com/decodingafterlife/SweetCode/blob/main/Images/ai-assistant-popup.png?raw=true)
 
-### Settings
-![Settings](https://github.com/decodingafterlife/SweetCode/blob/main/Images/settings.png?raw=true)
-
 ### Social Media Blocking
 ![Blocked Page](https://github.com/decodingafterlife/SweetCode/blob/main/Images/blocked-page.png?raw=true)
 
