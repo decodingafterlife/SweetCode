@@ -11,7 +11,7 @@
 </p>
 
 ## Overview
-SweetCode is designed to make solving DSA problems easier and more accessible for everyone whether you're a fresher, a software engineer, or completely new to programming. In its current form as a Web Extension, SweetCode gamifies your DSA journey by blocking social media websites and rewarding you with access time for every LeetCode problem you solve.SweetCode acts as your companion providing you with personalised, AI-powered hints based upon your specific problem and progress so whenever you get stuck, you receive just the right nudge to help you move forward.
+SweetCode is designed to make solving DSA problems easier and more accessible for everyone whether you're a fresher, a software engineer, or completely new to programming. In its current form as a Web Extension, SweetCode gamifies your DSA journey by blocking social media websites and rewards you with social media time as you solve problems. SweetCode also provides you AI-powered hints (at the cost of your accumulated social media time) whenever you get stuck.
 
 **New Feature**: AI Hint Assistant - Get helpful hints for LeetCode problems in exchange for your earned social media time.
 
