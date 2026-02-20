@@ -44,6 +44,13 @@ SweetCode is designed to make solving DSA problems easier and more accessible fo
 - **Customizable**: Easily modify time rewards or add/remove social media platforms.
 
 ## How to Use
+You can get started with SweetCode in two ways: either download the latest release directly or clone the repository from GitHub.
+
+### Quick Start: Download Latest Release
+1. Go to the [Releases](https://github.com/decodingafterlife/SweetCode/releases) page on GitHub.
+2. Download the latest `.zip` release package.
+3. Extract the contents to a folder on your computer.
+4. Continue with the steps below to load the extension in your browser.
 
 ### Clone the Repository
 1. Clone this repository to your local machine:
@@ -53,7 +60,7 @@ SweetCode is designed to make solving DSA problems easier and more accessible fo
 
 2. Navigate to the project directory:
    ```bash
-   cd SweetCode
+  cd SweetCode
    ```
 
 ### Load the Extension
@@ -78,9 +85,9 @@ To use the AI Hint Assistant feature, you'll need a Groq API key:
 2. Click on the gear icon to open Settings.
 3. Enter your Groq API key in the "Groq API Key" field.
 4. Select your preferred AI model from the dropdown:
-   - **Llama3-8b**: Fast and efficient for general hints.
-   - **Gemma-9b**: Good balance of speed and quality.
-   - **DeepSeek-70b**: Most advanced model for detailed hints.
+   - **Llama3.1-8b**: Good balance of speed and quality.
+   - **Kimi-k2**: Fast and efficient for general hints.
+   - **GPT-OSS-120b**: Most advanced open source model for detailed hints.
 5. The extension will automatically save your settings.
 
 #### 3. Using the AI Hints
