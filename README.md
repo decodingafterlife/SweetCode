@@ -11,9 +11,11 @@
 </p>
 
 ## Overview
-SweetCode is designed to make solving DSA problems easier and more accessible for everyone; whether you're a fresher, a software engineer, or completely new to programming. In its current form as a Web Extension, SweetCode gamifies your DSA journey by blocking social media websites and rewarding you with access time for every LeetCode problem you solve. Whenever you get stuck, SweetCode acts as your companion by providing personalised hints to help you progress.
+SweetCode is designed to make solving DSA problems easier and more accessible for everyone whether you're a fresher, a software engineer, or completely new to programming. In its current form as a Web Extension, SweetCode gamifies your DSA journey by blocking social media websites and rewarding you with access time for every LeetCode problem you solve.SweetCode acts as your companion providing you with personalised, AI-powered hints based upon your specific problem and progress so whenever you get stuck, you receive just the right nudge to help you move forward.
 
 **New Feature**: AI Hint Assistant - Get helpful hints for LeetCode problems in exchange for your earned social media time.
+
+**Future Development Plans**: Support for GfG, Integration of Solution blogs. (New issues are always open, feel free to contribute!)
 
 ## Have a look
 
@@ -51,7 +53,7 @@ SweetCode is designed to make solving DSA problems easier and more accessible fo
 
 2. Navigate to the project directory:
    ```bash
-   cd sweetcode
+   cd SweetCode
    ```
 
 ### Load the Extension
@@ -93,7 +95,7 @@ To use the AI Hint Assistant feature, you'll need a Groq API key:
 
 **Note**: The hint buttons only appear when you're on a LeetCode problem page. The AI analyzes the problem context automatically to provide relevant hints.
 
-> 💡 **Tip**: See the screenshots above for visual examples of the AI Assistant interface and hint system in action.
+> See the screenshots above for visual examples of the AI Assistant interface and hint system in action.
 
 ### Customize Social Media Websites
 The extension now uses an improved helper function for better website management. To add or remove social media platforms:
