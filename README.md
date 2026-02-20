@@ -60,7 +60,7 @@ You can get started with SweetCode in two ways: either download the latest relea
 
 2. Navigate to the project directory:
    ```bash
-  cd SweetCode
+   cd SweetCode
    ```
 
 ### Load the Extension
